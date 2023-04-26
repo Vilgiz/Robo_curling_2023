@@ -22,15 +22,14 @@ def mouse_callback(event, x, y, flags, param):
 
 
 def print_():
-    for cnt in contours:                                    # Вывод координат точек с зеленым цветом
+    for cnt in contours:                                    #  Вывод координат точек с зеленым цветом
         M = cv.moments(cnt)
         if M["m00"] != 0:
             x = int(M["m10"] / M["m00"])
             y = int(M["m01"] / M["m00"])
             print("Координаты точки с зеленым цветом: ({}, {})".format(x, y))
 
-            coordinates = [(x,y)]
-            return coordinates
+            
 
 
 def draw_circles(image, coordinates_list, radius=40, color=(0, 0, 255), thickness=5):
@@ -46,13 +45,6 @@ def main():
                 
     cv.namedWindow('image')                        
     cv.setMouseCallback("image", mouse_callback)
-
-
-
-
-    coordinates = print_()
-
-    draw_circles(img, coordinates)
 
     print_()
 
