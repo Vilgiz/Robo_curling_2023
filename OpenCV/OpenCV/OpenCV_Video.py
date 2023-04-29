@@ -8,7 +8,7 @@ lower_red2 = (170, 50, 50)
 upper_red2 = (180, 255, 255)
 
 # Настройка веб-камеры
-cap = cv.VideoCapture(1)
+cap = cv.VideoCapture(0)
 
 while True:
     # Получение кадра с веб-камеры
