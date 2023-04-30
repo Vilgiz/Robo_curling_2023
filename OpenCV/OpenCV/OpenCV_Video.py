@@ -1,4 +1,5 @@
 ﻿
+from asyncio.windows_events import NULL
 import cv2 as cv
 
 # Определение диапазона красного цвета в HSV
@@ -8,7 +9,7 @@ lower_red2 = (170, 50, 50)
 upper_red2 = (180, 255, 255)
 
 # Настройка веб-камеры
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 
 while True:
     # Получение кадра с веб-камеры
@@ -23,10 +24,10 @@ while True:
     mask = mask1 + mask2
 
     # Поиск контуров на маске
-    contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv.findContours( mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_TC89_L1)
 
     # Отображение кадра с контурами 
-    cv.drawContours(frame, contours, -1, (0, 0, 255), 2)
+    cv.drawContours(frame, contours, -1, (0, 255, 0), 2)
     cv.imshow('frame', frame)
 
     # Вывод координат в консоль
@@ -34,7 +35,7 @@ while True:
         area = cv.contourArea(c)
         if area > 200:
             (x, y), radius = cv.minEnclosingCircle(c)
-            if radius > 10:
+            if radius > 100:
                 print("Координаты красной окружности: ({}, {})".format(int(x), int(y)))
 
     if cv.waitKey(1) & 0xFF == ord('q'):
