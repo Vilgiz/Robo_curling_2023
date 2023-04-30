@@ -1,37 +1,37 @@
-
+п»ї
 import cv2
 
 class Camera:
     
-    def __init__(self, camera_port = 1):                # Конструктор класса camera
-        self.camera = self.__camera_init(camera_port)   # Создаем объект класса при помощи метода "__camera_init"
+    def __init__(self, camera_port = 1):                # РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР° camera
+        self.camera = self.__camera_init(camera_port)   # РЎРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РєР»Р°СЃСЃР° РїСЂРё РїРѕРјРѕС‰Рё РјРµС‚РѕРґР° "__camera_init"
 
-    def __camera_init(self, path):                      # Метод, используемый для создания объекта класса (path - выбор встроеной - 0, или внешней - 1 камеры)
+    def __camera_init(self, path):                      # РњРµС‚РѕРґ, РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° РєР»Р°СЃСЃР° (path - РІС‹Р±РѕСЂ РІСЃС‚СЂРѕРµРЅРѕР№ - 0, РёР»Рё РІРЅРµС€РЅРµР№ - 1 РєР°РјРµСЂС‹)
 
-        camera = cv2.VideoCapture(path, cv2.CAP_ANY)    # Захват видеопотока в объект класса camera   
+        camera = cv2.VideoCapture(path, cv2.CAP_ANY)    # Р—Р°С…РІР°С‚ РІРёРґРµРѕРїРѕС‚РѕРєР° РІ РѕР±СЉРµРєС‚ РєР»Р°СЃСЃР° camera   
 
-        camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)     # Установка 
-        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)     # разрешения
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)     # РЈСЃС‚Р°РЅРѕРІРєР° 
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)     # СЂР°Р·СЂРµС€РµРЅРёСЏ
 
         print('Warming up the camera')                  # 
-        for i in range(10):                             # Цикл для
-            print('/|\\-'[i % 4]+'\r', end='')          # "прогрева"
-            _, frame = camera.read()                    # камеры
+        for i in range(10):                             # Р¦РёРєР» РґР»СЏ
+            print('/|\\-'[i % 4]+'\r', end='')          # "РїСЂРѕРіСЂРµРІР°"
+            _, frame = camera.read()                    # РєР°РјРµСЂС‹
             cv2.waitKey(100)                            #
         return camera                               
 
 
-    def get_image(self):                                # Метод класса для получения кадра изображения
-        ret, frame = self.camera.read()                 # Получение изображения с камеры (ret - пришло ли изображение, frame - текущий кадр) 
+    def get_image(self):                                # РњРµС‚РѕРґ РєР»Р°СЃСЃР° РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєР°РґСЂР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
+        ret, frame = self.camera.read()                 # РџРѕР»СѓС‡РµРЅРёРµ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃ РєР°РјРµСЂС‹ (ret - РїСЂРёС€Р»Рѕ Р»Рё РёР·РѕР±СЂР°Р¶РµРЅРёРµ, frame - С‚РµРєСѓС‰РёР№ РєР°РґСЂ) 
 
-        if ret:                                         # Проверки 
-            return frame                                # получения 
-        return None                                     # кадра
-
-
+        if ret:                                         # РџСЂРѕРІРµСЂРєРё 
+            return frame                                # РїРѕР»СѓС‡РµРЅРёСЏ 
+        return None                                     # РєР°РґСЂР°
 
 
-def main():                                             # тест
+
+
+def main():                                             # С‚РµСЃС‚
     Cap = Camera(1)
 
     while True:
