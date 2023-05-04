@@ -1,11 +1,12 @@
 ﻿
+from colorsys import hsv_to_rgb
 import cv2 as cv
 import numpy
 
 img = cv.imread("C:\\Users\Vilgi\Desktop\sdsdw.jpg")   # Загружаем изображение
 
-lower_green = (30, 50, 50)                               # Определение диапазона зеленого цвета в HSV
-upper_green = (90, 255, 230)
+lower_green = (90, 80, 60)                       # Определение диапазона нужного цвета в HSV
+upper_green = (120, 160, 230)
 
 
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)              # Преобразование изображения в цветовую модель HSV
@@ -15,19 +16,27 @@ mask = cv.inRange(hsv, lower_green, upper_green)       # Создание мас
 contours, hierarchy = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)    # Нахождение контуров на маске
 
 
+
 def mouse_callback(event, x, y, flags, param):
     if event == cv.EVENT_LBUTTONDOWN:
-        pixel_color = img[y, x][::-1]
-        print(f"Цвет пикселя ({x}, {y}): {pixel_color}")
+        pixel_color = hsv[y, x]
+        print(f"Цвет пикселя ({x}, {y}): {pixel_color}")     #  Вывод координат точек в HSV
 
 
 def print_():
-    for cnt in contours:                                    #  Вывод координат точек с зеленым цветом
-        M = cv.moments(cnt)
-        if M["m00"] != 0:
-            x = int(M["m10"] / M["m00"])
-            y = int(M["m01"] / M["m00"])
-            print("Координаты точки с зеленым цветом: ({}, {})".format(x, y))
+    #for cnt in contours:                                    #  Вывод координат точек с нужным цветом
+       # M = cv.moments(cnt)
+        #if M["m00"] != 0:
+         #   x = int(M["m10"] / M["m00"])
+          #  y = int(M["m01"] / M["m00"])
+          #  print("Координаты точки с зеленым цветом: ({}, {})".format(x, y))
+
+    for c in contours:
+        area = cv.contourArea(c)
+        if area > 200:
+            (x, y), radius = cv.minEnclosingCircle(c)
+            if radius > 50:
+                print("Координаты красной окружности: ({}, {})".format(int(x), int(y)))
 
             
 
@@ -55,11 +64,5 @@ def main():
     
     cap = cv.VideoCapture(0)
 
-
-    #while True:
-     #   ret, frame = cap.read()
-      #  cv.imshow('frame', frame)
-       # if cv.waitKey(1) == ord('q'):
-        #    break
 
 main()
