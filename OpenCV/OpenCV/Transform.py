@@ -38,8 +38,6 @@ while True:
     cv.imshow('Original Image', img)
     cv.setMouseCallback("Original Image", mouse_callback)
     cv.imshow('Warped Image', warped_img)
-    
-
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
