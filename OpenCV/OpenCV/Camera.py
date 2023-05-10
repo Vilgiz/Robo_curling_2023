@@ -32,7 +32,6 @@ class Camera:
 
 
 
-
 #def main():                                             # тест
  #   Cap = Camera(1)
 

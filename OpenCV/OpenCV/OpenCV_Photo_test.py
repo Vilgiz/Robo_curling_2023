@@ -3,12 +3,18 @@ from colorsys import hsv_to_rgb
 import cv2 as cv
 import numpy
 
+
 cap = cv.VideoCapture(1) 
 ret, img = cap.read()
 #img = cv.imread("C:\\Users\Vilgi\Desktop\sdsdw.jpg")   # Загружаем изображение
 
-lower_green = (100, 160, 100)                       # Определение диапазона нужного цвета в HSV
-upper_green = (140, 250, 160)
+
+#red_lower = (160, 50, 50)                                                           # Задаем диапазоны цветов для красного и синего цветов
+#red_upper = (190, 255, 255) 
+
+
+lower_green = (0, 110, 150)                        # Определение диапазона нужного цвета в HSV
+upper_green = (10, 150, 200) 
 
 
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)              # Преобразование изображения в цветовую модель HSV
@@ -23,15 +29,10 @@ def mouse_callback(event, x, y, flags, param):
     if event == cv.EVENT_LBUTTONDOWN:
         pixel_color = hsv[y, x]
         print(f"Цвет пикселя ({x}, {y}): {pixel_color}")     #  Вывод координат точек в HSV
+        return(x,y)
 
 
 def print_():
-    #for cnt in contours:                                    #  Вывод координат точек с нужным цветом
-       # M = cv.moments(cnt)
-        #if M["m00"] != 0:
-         #   x = int(M["m10"] / M["m00"])
-          #  y = int(M["m01"] / M["m00"])
-          #  print("Координаты точки с зеленым цветом: ({}, {})".format(x, y))
 
     for c in contours:
         area = cv.contourArea(c)
