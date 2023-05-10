@@ -13,8 +13,8 @@ ret, img = cap.read()
 #red_upper = (190, 255, 255) 
 
 
-lower_green = (0, 110, 150)                        # Определение диапазона нужного цвета в HSV
-upper_green = (10, 150, 200) 
+lower_green = (0, 180, 150)                         # Определение диапазона нужного цвета в HSV
+upper_green = (10, 255, 255) 
 
 
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)              # Преобразование изображения в цветовую модель HSV
