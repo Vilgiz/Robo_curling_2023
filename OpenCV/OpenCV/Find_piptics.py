@@ -5,8 +5,8 @@ import numpy as np
 
 Cap = Camera(1)
 
-red_lower = (160, 50, 50)                                                           # Задаем диапазоны цветов для красного и синего цветов
-red_upper = (190, 255, 255) 
+red_lower = (0, 180, 150)                                                           # Задаем диапазоны цветов для красного и синего цветов
+red_upper = (10, 255, 255)  
 blue_lower = (100, 160, 50)  
 blue_upper = (140, 250, 160)
 
@@ -16,7 +16,7 @@ max_radius = 150
 track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
 track_id = 0
 
-track_blue_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
+track_blue_pipticks = {}                                                            # МАССИВ С КРАСНЫМИ КАМНЯМИ
 track_id_blue = 0
 
 red_pipticks_prev_frame = []                            
@@ -34,7 +34,7 @@ while True:
     frame = Cap.get_image()                                  
 
 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                     # Преобразуем изображение в цветовое пространство HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    # Преобразуем изображение в цветовое пространство HSV
 
     red_mask = cv2.inRange(hsv, red_lower, red_upper)                               # Находим красные камни
     red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -44,14 +44,12 @@ while True:
 
 
     for contour in red_contours:                                                    # Отображаем контуры красных кругов на изображении
-            (x_red, y_red), radius = cv2.minEnclosingCircle(contour)
-            center_red = (int(x_red), int(y_red))
-            radius = int(radius)
-            if radius > min_radius and radius < max_radius:
-                cv2.circle(frame, center_red, radius, (0, 0, 255), 2)
-                red_pipticks_current_frame.append((int(x_red),int(y_red)))              # запись центра координат во фрейм
-
-
+        (x_red, y_red), radius = cv2.minEnclosingCircle(contour)
+        center_red = (int(x_red), int(y_red))
+        radius = int(radius)
+        if radius > min_radius and radius < max_radius:
+            cv2.circle(frame, center_red, radius, (0, 0, 255), 2)
+            red_pipticks_current_frame.append((int(x_red),int(y_red)))              # запись центра координат во фрейм
 
 
 
@@ -61,7 +59,7 @@ while True:
         radius = int(radius)
         if radius > min_radius and radius < max_radius:
             cv2.circle(frame, center_blue, radius, (255, 0, 0), 2)                       
-            blue_pipticks_current_frame.append((int(x_blue),int(y_blue)))             # запись центра координат во фрейм
+            blue_pipticks_current_frame.append((int(x_blue),int(y_blue)))           # запись центра координат во фрейм
 
 
 
@@ -100,7 +98,6 @@ while True:
                 
     for obj_id, pt in track_red_pipticks.items():
         cv2.circle(frame, center_red, 3, (0, 255, 0), -1)
-        #print(center_red)
         cv2.putText(frame, str(obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
 
 
@@ -112,7 +109,7 @@ while True:
             for pt2_blue in blue_pipticks_prev_frame:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 
-                if distance_blue < 50:                                                   # размер погрешности движения одного и того же объекта
+                if distance_blue < 50:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[track_id_blue] = pt_blue
                     track_id_blue += 1
 
@@ -125,7 +122,7 @@ while True:
             for pt_blue in blue_pipticks_current_frame_copy:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 # Обновлениие позиции камня
-                if distance_blue < 30:                                                   # размер погрешности движения одного и того же объекта
+                if distance_blue < 30:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[obj_id_blue] = pt_blue
                     obj_exists_blue = True
                     if pt_blue in blue_pipticks_current_frame:
@@ -160,19 +157,12 @@ while True:
 
     print("###########################")
 
-    #print("RED curr frame")
-    #print(red_pipticks_current_frame)
-
-    #print("RED prev frame")
-   # print(red_pipticks_prev_frame)
-
     cv2.imshow('frame', frame)                                                   
     
     red_pipticks_prev_frame = red_pipticks_current_frame.copy()
     blue_pipticks_prev_frame = blue_pipticks_current_frame.copy()
     
     cv2.waitKey(1)
-
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
