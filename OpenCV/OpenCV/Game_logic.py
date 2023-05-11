@@ -117,7 +117,7 @@ def path_searching(start_x, stop_x, step, start_y, distance, solution_matrix, da
                 point_x = point[1]
                 point_y = point[2]
                 # вычисляем расстояние от точки до прямой
-                if (point_y < -50 + y2) and (point != solution_matrix[k][2]):
+                if ((point_y < 100 + y2)and(solution_matrix[k][1] == 'normal')or(point_y < -55 + y2)and(solution_matrix[k][1] != 'normal')) and (point != solution_matrix[k][2]):
                     distance_to_line = abs(a * point_x + b * point_y + c) / math.sqrt(a ** 2 + b ** 2)
                     if distance_to_line < distance:
                         count +=1 
@@ -144,7 +144,7 @@ def brain(data):
     return (path)
     
 
-def draw_points_and_circles(data, path):
+def draw_plt(data, path):
     # Data processing
     colors = ['none', 'blue', 'red']
     x = [point[1] for point in data]
@@ -174,8 +174,3 @@ def draw_points_and_circles(data, path):
     plt.axis('scaled')
     plt.show()
 
-#data = [[1,0,0], [1,500,500],[1,2,2],[2,1,1]]
-
-#print (get_sector_number(data))
-#print(brain(data))
-#draw_points_and_circles(data, brain(data))

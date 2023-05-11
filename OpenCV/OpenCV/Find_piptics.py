@@ -3,28 +3,11 @@ import math
 from Camera import Camera
 import numpy as np
 
-Cap = Camera(1)
 
-red_lower = (0, 180, 150)                                                           # Задаем диапазоны цветов для красного и синего цветов
-red_upper = (10, 255, 255)  
-blue_lower = (100, 160, 50)  
-blue_upper = (140, 250, 160)
 
-min_radius = 70                                                                     # Задаем минимальный и максимальный радиусы
-max_radius = 150
-
-track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
-track_id = 0
-
-track_blue_pipticks = {}                                                            # МАССИВ С КРАСНЫМИ КАМНЯМИ
-track_id_blue = 0
-
-red_pipticks_prev_frame = []                            
-blue_pipticks_prev_frame = []
-
-count = 0                                                                           # переменная-счетчик - количество кадров
-
-while True:
+def Find(Cap, red_lower, red_upper, blue_lower, blue_upper, min_radius, max_radius, count, 
+             track_red_pipticks, track_id, track_blue_pipticks, track_id_blue, red_pipticks_prev_frame, 
+             blue_pipticks_prev_frame):
 
     count += 1
     red_pipticks_current_frame = []
@@ -101,9 +84,6 @@ while True:
         cv2.putText(frame, str(obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
 
 
-########################################################################################### 
-
-
     if count <= 2:
         for pt_blue in blue_pipticks_current_frame:
             for pt2_blue in blue_pipticks_prev_frame:
@@ -142,20 +122,14 @@ while True:
         cv2.putText(frame, str(obj_id_blue), (pt_blue[0], pt_blue[1] - 7), 0, 1, (0,0,255), 2)
 
 
+    #print("###########################")
 
+    #print("RED PiPticks:")
+    #print(track_red_pipticks)
+    #print("BLUE PiPticks:")
+    #print(track_blue_pipticks)
 
-
-   
-#######################################################################################
-
-    print("###########################")
-
-    print("RED PiPticks:")
-    print(track_red_pipticks)
-    print("BLUE PiPticks:")
-    print(track_blue_pipticks)
-
-    print("###########################")
+    #print("###########################")
 
     cv2.imshow('frame', frame)                                                   
     
@@ -163,8 +137,5 @@ while True:
     blue_pipticks_prev_frame = blue_pipticks_current_frame.copy()
     
     cv2.waitKey(1)
+    return (track_red_pipticks, track_blue_pipticks)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cv2.destroyAllWindows()

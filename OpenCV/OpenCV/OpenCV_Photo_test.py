@@ -2,19 +2,22 @@
 from colorsys import hsv_to_rgb
 import cv2 as cv
 import numpy
+from Camera import Camera
 
 
-cap = cv.VideoCapture(1) 
-ret, img = cap.read()
+Cam = Camera(1)
+frame = Cam.get_image()
+
+img = frame
 #img = cv.imread("C:\\Users\Vilgi\Desktop\sdsdw.jpg")   # Загружаем изображение
 
 
 #red_lower = (160, 50, 50)                                                           # Задаем диапазоны цветов для красного и синего цветов
 #red_upper = (190, 255, 255) 
 
-
-lower_green = (0, 180, 150)                         # Определение диапазона нужного цвета в HSV
-upper_green = (10, 255, 255) 
+ 
+lower_green = (0, 140, 120)                          # Определение диапазона нужного цвета в HSV
+upper_green = (10, 200, 255)  
 
 
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)              # Преобразование изображения в цветовую модель HSV
