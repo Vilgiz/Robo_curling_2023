@@ -1,21 +1,22 @@
 ﻿import concurrent.futures
 import cv2
 import math
+
 from Camera import Camera
 from Transform_2 import pos_transformation
-from Click import mouse_callback
+#from Click import mouse_callback
 from Game_logic import brain, draw_plt
 from queue import Queue
 
 
-Cap = Camera(1)
+Cap = Camera(0)
 
 red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
 red_upper = (10, 200, 255)  
 blue_lower = (90, 70, 20)   
 blue_upper = (120, 220, 100)
 
-min_radius = 20                                                                 # Задаем минимальный и максимальный радиусы
+min_radius = 30                                                                 # Задаем минимальный и максимальный радиусы
 max_radius = 1000
 
 track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
@@ -31,8 +32,8 @@ count = 0                                                                       
 arg1 = 1
 arg2 = 2
 
-x_table = 350
-y_table = 1500
+x_table = 400
+y_table = 1100
 ln = 300
 
 
@@ -45,12 +46,10 @@ def mouse_callback(event, x, y, flags, param):
         print(pixel_coord)
         return(pixel_coord)
 
-def check():
-    cv2.imshow('Frame', frame)      
-    cv2.setMouseCallback("Frame", mouse_callback)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
+cv2.imshow('Frame', frame)      
+cv2.setMouseCallback("Frame", mouse_callback)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 while True:
 
@@ -96,7 +95,7 @@ while True:
             for pt2 in red_pipticks_prev_frame:
                 distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
                 
-                if distance < 50:                                                   # размер погрешности движения одного и того же объекта
+                if distance < 70:                                                   # размер погрешности движения одного и того же объекта
                     track_red_pipticks[track_id] = pt
                     track_id += 1
 
@@ -137,7 +136,7 @@ while True:
             for pt2_blue in blue_pipticks_prev_frame:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 
-                if distance_blue < 50:                                              # размер погрешности движения одного и того же объекта
+                if distance_blue < 70:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[track_id_blue] = pt_blue
                     track_id_blue += 1
 
@@ -183,33 +182,53 @@ while True:
     #print("BLUE PiPticks:")
     #print(track_blue_pipticks)
 
-   # print("###########################")
+    print("###########################")
 
     cv2.imshow('frame', frame)                                                   
     
     red_pipticks_prev_frame = red_pipticks_current_frame.copy()
     blue_pipticks_prev_frame = blue_pipticks_current_frame.copy()
-    
+   
 
-    #BLUE = list(track_blue_pipticks)
-    print(track_blue_pipticks)
+    BLUE = tuple(track_blue_pipticks.items())
+    RED = tuple(track_red_pipticks.items())
+    print("смотрю на твой пиптик 0_0")
 
-    print("######################")
-    for element in track_blue_pipticks:
-        print(element)
-
-   # while True: 
-        #if (True):
-            #print("Worker 11 started")
-
-            #data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, track_red_pipticks[1], track_blue_pipticks[1])
-            #print(data)
-            #target = brain (data) 
-            #print(target)
-
-    #print("Worker 1 finished")
+    print("RED")
+    print(RED)
+    print("BLUE")
+    print(BLUE)
 
     cv2.waitKey(1) 
+
+
+
+    if count % 20 == 0:
+        while True: 
+            if (True):
+                #BLUE = BLUE + (0, (0,0))
+                #RED = RED + (0, (0,0))
+
+                RED_COORD = []
+                for i in range (len(RED)):
+                    for pip in RED[i]:
+                        RED_COORD.append(pip[1])
+
+                BLUE_COORD = []
+                for i in range (len(BLUE)):
+                    for pip in BLUE[i]:
+                        BLUE_COORD.append(pip[1])
+
+                data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, RED_COORD, BLUE_COORD)
+                print(data)
+
+                target = brain (data) 
+                #print(target)
+                draw_plt(data, target) 
+                cv2.waitKey(0) 
+                break
+
+
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
