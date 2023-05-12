@@ -100,7 +100,6 @@ def solution_searching (solution_matrix, normal_priority, fast_priority, data):
                 solution_matrix.append([normal_priority[i][j], 'normal', centers[i][j]])
      
      solution_matrix = sorted(solution_matrix, key=lambda x: x[0], reverse=True)
-     print(solution_matrix)
      return solution_matrix
 
 def path_searching(start_x, stop_x, step, start_y, distance, solution_matrix, data):
@@ -122,8 +121,8 @@ def path_searching(start_x, stop_x, step, start_y, distance, solution_matrix, da
                     if distance_to_line < distance:
                         count +=1 
             if count == 0: 
-                return [[x1, y1],[x2, y2]]
-    return []
+                return [[x1, y1],[x2, y2], [solution_matrix[k][1]]]
+    return [[x1, y1],[x2, y2], [solution_matrix[k][1]]]
 
 ###################################################################################################################
 
@@ -141,6 +140,7 @@ def brain(data):
     solution_matrix = solution_searching(solution_matrix, normal_priority, fast_priority, data)
     #print (solution_matrix)
     path = path_searching(150, 650, 50, 10, 120, solution_matrix, data)
+    print(path)
     return (path)
     
 

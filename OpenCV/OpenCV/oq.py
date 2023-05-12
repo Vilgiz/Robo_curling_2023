@@ -8,8 +8,13 @@ from Transform_2 import pos_transformation
 from Game_logic import brain, draw_plt
 from queue import Queue
 
+import time
+from Robot import Robot
 
-Cap = Camera(0)
+robot = Robot(timeout=10, print_debug=True)
+robot.start()
+
+Cap = Camera(1)
 
 red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
 red_upper = (10, 200, 255)  
@@ -32,10 +37,9 @@ count = 0                                                                       
 arg1 = 1
 arg2 = 2
 
-x_table = 400
-y_table = 1100
-ln = 300
-
+x_table = 140
+y_table = 1300
+ln = 310
 
 frame = Cap.get_image()
 pixel_coord = []
@@ -57,9 +61,7 @@ while True:
     red_pipticks_current_frame = []
     blue_pipticks_current_frame = []
 
-
     frame = Cap.get_image()                                  
-
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    # Преобразуем изображение в цветовое пространство HSV
 
@@ -182,7 +184,7 @@ while True:
     #print("BLUE PiPticks:")
     #print(track_blue_pipticks)
 
-    print("###########################")
+    #print("###########################")
 
     cv2.imshow('frame', frame)                                                   
     
@@ -206,23 +208,20 @@ while True:
     if count % 20 == 0:
         while True: 
             if (True):
-                #BLUE = BLUE + (0, (0,0))
-                #RED = RED + (0, (0,0))
 
                 RED_COORD = []
-                for i in range (len(RED)):
-                    for pip in RED[i]:
-                        RED_COORD.append(pip[1])
+                for pip in RED:
+                    RED_COORD.append(pip[1])
 
                 BLUE_COORD = []
-                for i in range (len(BLUE)):
-                    for pip in BLUE[i]:
-                        BLUE_COORD.append(pip[1])
+                for pip in BLUE:
+                    BLUE_COORD.append(pip[1])
 
                 data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, RED_COORD, BLUE_COORD)
                 print(data)
 
                 target = brain (data) 
+                robot.send_step(target)
                 #print(target)
                 draw_plt(data, target) 
                 cv2.waitKey(0) 
