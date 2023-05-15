@@ -23,8 +23,7 @@ class Camera:
 
     def get_image(self):                                # Метод класса для получения кадра изображения
         ret, frame = self.camera.read()                 # Получение изображения с камеры (ret - пришло ли изображение, frame - текущий кадр) 
-        frame = cv2.flip(frame, 0)
-        #frame = cv2.flip(frame, 1)
+
         if ret:                                         # Проверки 
             return frame                                # получения 
         return None                                     # кадра

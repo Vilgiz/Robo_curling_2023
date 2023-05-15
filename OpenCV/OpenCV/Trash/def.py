@@ -4,45 +4,57 @@ import math
 from Camera import Camera
 import numpy as np
 
-Cap = Camera(1)
+Cap = Camera(0)
+count = 0     
 
-red_lower = (0, 150, 150)                                                            # Задаем диапазоны цветов для красного и синего цветов
-red_upper = (10, 200, 255)  
-blue_lower = (90, 70, 50) 
-blue_upper = (115, 220, 100)
+class Find:
+    def __init__(self):
 
-min_radius = 20                                                                 # Задаем минимальный и максимальный радиусы
-max_radius = 1000
+        return 0
+    
+    def find_counters(self, red_lower, red_upper, blue_lower ,blue_upper):
+        count += 1
+        
+        #red_lower = (0, 150, 150)                               # Задаем  
+        #red_upper = (10, 200, 255)                              # диапазоны
+        #blue_lower = (90, 70, 50)                               # цветов для
+        #blue_upper = (115, 220, 100)                            # красного и синего 
 
-track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
-track_id = 0
+        frame = Cap.get_image()                                  
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                   
+        red_mask = cv2.inRange(hsv, red_lower, red_upper)                              
+        red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        blue_mask = cv2.inRange(hsv, blue_lower, blue_upper)                        
+        blue_contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-track_blue_pipticks = {}                                                            # МАССИВ С КРАСНЫМИ КАМНЯМИ
-track_id_blue = 0
+        return (red_contours, blue_contours)
 
-red_pipticks_prev_frame = []                            
-blue_pipticks_prev_frame = []
+    def find_piptics(self, min_radius, max_radius):
 
-count = 0                                                                                 # переменная-счетчик - количество кадров
+        track_red_pipticks = {}                                 # СЛОВАРЬ С КРАСНЫМИ КАМНЯМИ
+        track_id = 0
 
+        track_blue_pipticks = {}                                # СЛОВАРЬ С СИНИМИ КАМНЯМИ
+        track_id_blue = 0
+
+        red_pipticks_prev_frame = []                            
+        blue_pipticks_prev_frame = []
+
+        return 0 
+
+    def reset_the_frame(self):
+        red_pipticks_current_frame = []
+        blue_pipticks_current_frame = []
+
+        return 0
+    
+Find = Find()
+
+Find.reset_the_frame()
+Find.find_counters((0, 150, 150), (10, 200, 255), (90, 70, 50), (115, 220, 100))
+Find.find_piptics(30, 1000)
+    
 while True:
-
-    count += 1
-    red_pipticks_current_frame = []
-    blue_pipticks_current_frame = []
-
-
-    frame = Cap.get_image()                                  
-
-
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    # Преобразуем изображение в цветовое пространство HSV
-
-    red_mask = cv2.inRange(hsv, red_lower, red_upper)                               # Находим красные камни
-    red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    blue_mask = cv2.inRange(hsv, blue_lower, blue_upper)                            # Находим синие камни
-    blue_contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
 
     for contour in red_contours:                                                    # Отображаем контуры красных кругов на изображении
         (x_red, y_red), radius = cv2.minEnclosingCircle(contour)
@@ -69,7 +81,7 @@ while True:
             for pt2 in red_pipticks_prev_frame:
                 distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
                 
-                if distance < 50:                                                   # размер погрешности движения одного и того же объекта
+                if distance < 70:                                                   # размер погрешности движения одного и того же объекта
                     track_red_pipticks[track_id] = pt
                     track_id += 1
 
@@ -110,7 +122,7 @@ while True:
             for pt2_blue in blue_pipticks_prev_frame:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 
-                if distance_blue < 50:                                              # размер погрешности движения одного и того же объекта
+                if distance_blue < 70:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[track_id_blue] = pt_blue
                     track_id_blue += 1
 
@@ -149,21 +161,33 @@ while True:
    
 #######################################################################################
 
-    print("###########################")
+    #print("###########################")
 
-    print("RED PiPticks:")
-    print(track_red_pipticks)
-    print("BLUE PiPticks:")
-    print(track_blue_pipticks)
+    #print("RED PiPticks:")
+    #print(track_red_pipticks)
+    #print("BLUE PiPticks:")
+    #print(track_blue_pipticks)
 
-    print("###########################")
+    #print("###########################")
 
     cv2.imshow('frame', frame)                                                   
     
     red_pipticks_prev_frame = red_pipticks_current_frame.copy()
     blue_pipticks_prev_frame = blue_pipticks_current_frame.copy()
-    
-    cv2.waitKey(1)
+   
+
+    BLUE = tuple(track_blue_pipticks.items())
+    RED = tuple(track_red_pipticks.items())
+    print("Watch on your piptic 0_0")
+
+    print("RED")
+    print(RED)
+    print("BLUE")
+    print(BLUE)
+
+    cv2.waitKey(1) 
+
+
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

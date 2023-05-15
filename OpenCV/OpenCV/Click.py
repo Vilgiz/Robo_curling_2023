@@ -1,22 +1,25 @@
 
 import cv2
 from Camera import Camera
+import numpy as np
 
-Cam = Camera(1)
-frame = Cam.get_image()
-pixel_coord = []
+class MouseCallback:
+    
+    def __init__(self, winname):
+        self.winname = winname
+        self.points = []
+        cv2.namedWindow(self.winname)
+        cv2.setMouseCallback(self.winname, self.on_mouse)
 
-def mouse_callback(event, x, y, flags, param):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        pixel_coord.append([x,y])
-        print(pixel_coord)
-        return(pixel_coord)
+    def on_mouse(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.points.append((x, y))
 
-def main():
+    def get_points(self, image):
+        self.points = []
+        cv2.imshow(self.winname, image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        return np.array(self.points)
+    
 
-    cv2.imshow('Frame', frame)      
-    cv2.setMouseCallback("Frame", mouse_callback)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-main()

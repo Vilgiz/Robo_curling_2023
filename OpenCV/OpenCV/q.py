@@ -1,13 +1,20 @@
 ﻿import concurrent.futures
 import cv2
 import math
-from Camera import Camera
-from Transform_2 import pos_transformation
-from Click import mouse_callback
-from Game_logic import brain, draw_plt
-from queue import Queue
 
-Cap = Camera(1)
+from Camera import Camera
+from Click import MouseCallback
+from Game_logic import brain, draw_plt
+
+from Robot import Robot
+from queue import Queue
+from Transform_2 import pos_transformation
+
+Cap = Camera(0)
+frame = Cap.get_image()
+call = MouseCallback("Frame Calibration")
+call.get_points(frame)
+pixel_coord = (call.points)
 
 red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
 red_upper = (10, 200, 255)  
@@ -34,27 +41,11 @@ x_table = 350
 y_table = 1500
 ln = 300
 
-
 frame = Cap.get_image()
 pixel_coord = []
 
 
-def mouse_callback(event, x, y, flags, param):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        pixel_coord.append([x,y])
-        print(pixel_coord)
-        return(pixel_coord)
-
-def check():
-    cv2.imshow('Frame', frame)      
-    cv2.setMouseCallback("Frame", mouse_callback)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
-
-
-def worker1(arg1, arg2):
+def Logic():
     track_red_pipticks, track_blue_pipticks = q.get()
     print(track_red_pipticks[1])
     q.task_done()
@@ -66,11 +57,7 @@ def worker1(arg1, arg2):
 
             data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, track_red_pipticks[1], track_blue_pipticks[1])
             print(data)
-            #target = brain (data) 
-            #print(target)
 
-    print("Worker 1 finished")
-    result = 1
 
 
 def Find(Cap, red_lower, red_upper, blue_lower, blue_upper, min_radius, max_radius, count, 
@@ -203,11 +190,10 @@ def Find(Cap, red_lower, red_upper, blue_lower, blue_upper, min_radius, max_radi
 q = Queue()
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-    future1 = executor.submit(worker1, 1, 2)
+    future1 = executor.submit(Logic)
     future2 = executor.submit(Find, Cap, red_lower, red_upper, blue_lower, blue_upper, min_radius, max_radius, count, 
              track_red_pipticks, track_id, track_blue_pipticks, track_id_blue, red_pipticks_prev_frame, 
              blue_pipticks_prev_frame)
-
 
 print("Red:", track_red_pipticks)
 print("Blue:", track_blue_pipticks)

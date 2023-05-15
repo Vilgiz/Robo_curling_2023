@@ -7,7 +7,7 @@ import numpy as np
 
 def get_sector_number(data):
     # Define params of field
-    center = (207, 1148)
+    center = (400, 1148)
     radius1 = 260
     radius2 = 370
     radius3 = 50
@@ -152,7 +152,7 @@ def draw_plt(data, path):
     c = [colors[point[0]] for point in data]
 
     # Define params of field
-    center = (207, 1148)
+    center = (400, 1148)
     radius = [370, 260, 150, 50]
     num_sectors = 22
     angles = np.linspace(0, 360, num_sectors+1)
@@ -173,4 +173,3 @@ def draw_plt(data, path):
     plt.plot ([path[0][0],path[1][0]],[path[0][1],path[1][1]])
     plt.axis('scaled')
     plt.show()
-

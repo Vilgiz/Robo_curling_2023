@@ -1,0 +1,58 @@
+import cv2
+import numpy as np
+# функция для поиска синего кольца и проверки координат
+def find_blue_ring():
+    # открытие видеопотока с веб-камеры
+    cap = cv2.VideoCapture(1)
+
+    while True:
+        # чтение кадра из видеопотока
+        ret, frame = cap.read()
+
+        # преобразование изображения в цветовое пространство HSV
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+        # определение диапазона синего цвета в HSV
+        lower_blue = np.array([110, 50, 50])
+        upper_blue = np.array([130, 255, 255])
+
+        # создание маски для синего цвета
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+        # поиск контуров на изображении
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        # поиск круговых контуров
+        circles = []
+        for contour in contours:
+            area = cv2.contourArea(contour)
+            if area > 1000:
+                perimeter = cv2.arcLength(contour, True)
+                approx = cv2.approxPolyDP(contour, 0.03 * perimeter, True)
+                if len(approx) > 8:
+                    (x, y), radius = cv2.minEnclosingCircle(contour)
+                    circles.append((int(x), int(y), int(radius))) 
+
+        # отображение круговых контуров на изображении
+        for circle in circles:
+            cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 255, 0), 2)
+
+            # проверка координат
+            x, y = input("Введите координаты в формате x,y: ").split(",")
+            x, y = int(x), int(y)
+            if circle[0] - circle[2] < x < circle[0] + circle[2] and circle[1] - circle[2] < y < circle[1] + circle[2]:
+                print("Координаты принадлежат синему кольцу")
+
+        # отображение изображения в окне
+        cv2.imshow('frame', frame)
+
+        # выход из цикла при нажатии клавиши 'q'
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # освобождение ресурсов
+    cap.release()
+    cv2.destroyAllWindows()
+
+# вызов функции
+find_blue_ring()

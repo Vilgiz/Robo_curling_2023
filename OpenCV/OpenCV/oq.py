@@ -1,20 +1,20 @@
-﻿import concurrent.futures
 import cv2
 import math
 
 from Camera import Camera
+from Click import MouseCallback
 from Transform_2 import pos_transformation
-#from Click import mouse_callback
 from Game_logic import brain, draw_plt
-from queue import Queue
-
-import time
 from Robot import Robot
 
 robot = Robot(timeout=10, print_debug=True)
 robot.start()
-
 Cap = Camera(1)
+
+frame = Cap.get_image()
+call = MouseCallback("Frame Calibration")
+call.get_points(frame)
+pixel_coord = (call.points)
 
 red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
 red_upper = (10, 200, 255)  
@@ -37,23 +37,10 @@ count = 0                                                                       
 arg1 = 1
 arg2 = 2
 
-x_table = 140
+x_table = 400
 y_table = 1300
 ln = 310
 
-frame = Cap.get_image()
-pixel_coord = []
-
-def mouse_callback(event, x, y, flags, param):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        pixel_coord.append([x,y])
-        print(pixel_coord)
-        return(pixel_coord)
-
-cv2.imshow('Frame', frame)      
-cv2.setMouseCallback("Frame", mouse_callback)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
 
 while True:
 
@@ -194,7 +181,7 @@ while True:
 
     BLUE = tuple(track_blue_pipticks.items())
     RED = tuple(track_red_pipticks.items())
-    print("смотрю на твой пиптик 0_0")
+    print("Watch on your piptic 0_0")
 
     print("RED")
     print(RED)
@@ -216,6 +203,17 @@ while True:
                 BLUE_COORD = []
                 for pip in BLUE:
                     BLUE_COORD.append(pip[1])
+
+                """ for pip in range (len(RED_COORD)):
+                    for point1 in RED_COORD[pip]:
+                        pip = pip+1
+                        for point2 in RED_COORD[pip]:
+                            RED_COORD[point1][point2] = RED_COORD[point2][point1]
+                
+                for pip in range (len(BLUE_COORD)):
+                    for point1 in BLUE_COORD[pip]:
+                        for point2 in BLUE_COORD[pip+1]:
+                            BLUE_COORD[point1][point2] = BLUE_COORD[point1][point2] """
 
                 data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, RED_COORD, BLUE_COORD)
                 print(data)

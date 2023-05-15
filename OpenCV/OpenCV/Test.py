@@ -1,5 +1,13 @@
-﻿my_nested_array = [[1, 2], [3, 4]]
-for a, b in my_nested_array:
-    s = a
-    ss = b
-print(a, b)
+from Click import MouseCallback
+from Camera import Camera
+import cv2
+import numpy as np
+
+
+camera = Camera(0)
+frame = camera.get_image()
+
+call = MouseCallback("Frame Calibration")
+call.get_points(frame)
+print(call.points)
+
