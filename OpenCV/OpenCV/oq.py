@@ -1,15 +1,17 @@
 import cv2
 import math
 
-from Camera import Camera
-from Click import MouseCallback
 from Transform_2 import pos_transformation
 from Game_logic import brain, draw_plt
+
 from Robot import Robot
+from Balli import Balli
+from Camera import Camera
+from Click import MouseCallback
 
 robot = Robot(timeout=10, print_debug=True)
 robot.start()
-Cap = Camera(1)
+Cap = Camera(0)
 
 frame = Cap.get_image()
 call = MouseCallback("Frame Calibration")
@@ -41,6 +43,16 @@ x_table = 400
 y_table = 1300
 ln = 310
 
+
+center = (400, 1100)
+
+radius_white_Circle = 50
+radius_green_Circle = 150
+radius_blue_Ring = 260
+radius_white_Ring = 370
+
+Red_scope = Balli(center, radius_white_Circle, radius_green_Circle, radius_blue_Ring, radius_white_Ring)
+Blue_scope = Balli(center, radius_white_Circle, radius_green_Circle, radius_blue_Ring, radius_white_Ring)
 
 while True:
 
@@ -181,12 +193,12 @@ while True:
 
     BLUE = tuple(track_blue_pipticks.items())
     RED = tuple(track_red_pipticks.items())
-    print("Watch on your piptic 0_0")
+    #print("Watch on your piptic 0_0")
 
-    print("RED")
-    print(RED)
-    print("BLUE")
-    print(BLUE)
+    #print("RED")
+    #print(RED)
+    #print("BLUE")
+    #print(BLUE)
 
     cv2.waitKey(1) 
 
@@ -204,16 +216,6 @@ while True:
                 for pip in BLUE:
                     BLUE_COORD.append(pip[1])
 
-                """ for pip in range (len(RED_COORD)):
-                    for point1 in RED_COORD[pip]:
-                        pip = pip+1
-                        for point2 in RED_COORD[pip]:
-                            RED_COORD[point1][point2] = RED_COORD[point2][point1]
-                
-                for pip in range (len(BLUE_COORD)):
-                    for point1 in BLUE_COORD[pip]:
-                        for point2 in BLUE_COORD[pip+1]:
-                            BLUE_COORD[point1][point2] = BLUE_COORD[point1][point2] """
 
                 data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, RED_COORD, BLUE_COORD)
                 print(data)
@@ -221,8 +223,46 @@ while True:
                 target = brain (data) 
                 robot.send_step(target)
                 #print(target)
+                
+                BLUE_COORD = []
+                RED_COORD = []
+
+
+
+                for color_piptic in data:
+                    VR_BLUE_COORD = []
+                    VR_RED_COORD = []
+                    if color_piptic[0] == 0:
+                        VR_RED_COORD.append(color_piptic[1])
+                        VR_RED_COORD.append(color_piptic[2])
+                        RED_COORD.append(VR_RED_COORD)
+                    else:
+                        VR_BLUE_COORD.append(color_piptic[1])
+                        VR_BLUE_COORD.append(color_piptic[2])
+                        BLUE_COORD.append(VR_BLUE_COORD)
+
+
+                print (RED_COORD)
+                print (BLUE_COORD)
+
+                if type(RED_COORD) == int:
+                    print(Red_scope.point)
+                else:
+                    print(Red_scope.point)
+                    for quantity in range (len(RED_COORD)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
+                        Red_scope.Which_field(Red_scope.iteration_of_piptics(RED_COORD, quantity))
+                    print(Red_scope.point)
+
+                if type(BLUE_COORD) == int:
+                   print(Blue_scope.point)
+                else:
+                    for quantity in range (len(BLUE_COORD)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
+                        Blue_scope.Which_field(Blue_scope.iteration_of_piptics(BLUE_COORD, quantity))
+                    print(Blue_scope.point)
+
                 draw_plt(data, target) 
                 cv2.waitKey(0) 
+
                 break
 
 

@@ -7,6 +7,33 @@ import numpy as np
 Cap = Camera(0)
 count = 0     
 
+
+red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
+red_upper = (10, 200, 255)  
+blue_lower = (90, 70, 20)   
+blue_upper = (120, 220, 100)
+
+min_radius = 30                                                                 # Задаем минимальный и максимальный радиусы
+max_radius = 1000
+
+track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
+track_id = 0
+
+track_blue_pipticks = {}                                                            # МАССИВ С КРАСНЫМИ КАМНЯМИ
+track_id_blue = 0
+
+red_pipticks_prev_frame = []                            
+blue_pipticks_prev_frame = []
+
+count = 0                                                                           # переменная-счетчик - количество кадров
+arg1 = 1
+arg2 = 2
+
+x_table = 400
+y_table = 1300
+ln = 310
+
+
 class Find:
     def __init__(self):
 

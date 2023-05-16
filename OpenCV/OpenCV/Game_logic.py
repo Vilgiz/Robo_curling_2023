@@ -6,7 +6,7 @@ import numpy as np
 
 
 def get_sector_number(data):
-    # Define params of field
+    # Определить параметры поля
     center = (400, 1148)
     radius1 = 260
     radius2 = 370
@@ -14,10 +14,10 @@ def get_sector_number(data):
     radius4 = 150
     num_sectors = 22
     
-    # Devide field into sectors
+    # Разделить поле на сектора
     sector_size = 360 / num_sectors
     
-    # Calculate, in which field circle is the point
+    # Вычислите, в какой окружности поля находится точка
     for i in range(len(data)):
         distance = math.sqrt((data[i][1]-center[0])**2 + (data[i][2]-center[1])**2)
         if distance > radius1 and distance < radius2:
@@ -27,11 +27,11 @@ def get_sector_number(data):
         else:
              sector_type = 0
     
-    # Calculate  angle of the point based on the circle center
+    # Вычислить угол точки на основе центра окружности
         angle = math.degrees(math.atan2(data[i][2]-center[1], data[i][1]-center[0]))
         if angle<0: angle = 360 + angle
     
-    # Find point's sector
+    # Найдите сектор точки
         sector_number = int(angle // sector_size)
         data[i].append(sector_type)
         data[i].append(sector_number)
@@ -140,7 +140,7 @@ def brain(data):
     solution_matrix = solution_searching(solution_matrix, normal_priority, fast_priority, data)
     #print (solution_matrix)
     path = path_searching(150, 650, 50, 10, 120, solution_matrix, data)
-    print(path)
+    #print(path)
     return (path)
     
 

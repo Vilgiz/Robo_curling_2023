@@ -1,10 +1,10 @@
 from math import atan2, sin, cos, sqrt
 
 def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
-    # x_table, y_table - x и y центра поля в ск стола, в мм
-    # c_point = (x,y) - координаты центра поля в ск OpenCV, в ппг (попугаи)
-    # p1 p2 - точки начала и конца вектора || Ox ск стола. Измеряются в СК OpenCV, ппг (попугаи)
-    # ln = длина отрезка p1-p2 в мм
+    # x_table, y_table - x пїЅ y пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅ
+    # c_point = (x,y) - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ OpenCV, пїЅ пїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+    # p1 p2 - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ || Ox пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ OpenCV, пїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+    # ln = пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ p1-p2 пїЅ пїЅпїЅ
     x1 = p1[0]
     x2 = p2[0]
     y1 = p1[1]
@@ -25,30 +25,28 @@ def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
 
     rocks = [Blue, Red]
     data = []
-
-    rocks = [Blue, Red]
-    data = []
     
-    print("###########################")
+    """ print("###########################")
 
     print("RED PiPticks:")
     print(Red)
     print("BLUE PiPticks:")
     print(Blue)
 
-    print("###########################")
+    print("###########################") """
 
     for i in range (len(rocks)):
         for point in rocks[i]:
             x_p = point[0]
             y_p = point[1]
             x = x_shift + x_p*cos(angle) - y_p*sin(angle) 
-            y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                                        #СК камеры -> СК стола
+            y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                #пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ -> пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             x *= cf
             y *= cf
             data.append([i+1, int(x),int(y)])
-            
+
     return (data) 
+
 
 
 
@@ -62,7 +60,7 @@ def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
             #x_p = point
             #y_p = point2
             #x = x_shift + x_p*cos(angle) - y_p*sin(angle) 
-            #y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                                        #СК камеры -> СК стола
+            #y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                                        #пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ -> пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             #x *= cf
             #y *= cf
             #data.append([i+1, (int(x),int(y))])
