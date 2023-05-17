@@ -41,8 +41,6 @@ red_pipticks_prev_frame = []
 blue_pipticks_prev_frame = []
 
 count = 0                                                                           # переменная-счетчик - количество кадров
-arg1 = 1
-arg2 = 2
 
 x_table = 400
 y_table = 1100
@@ -75,7 +73,7 @@ while True:
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    # Преобразуем изображение в цветовое пространство HSV
 
-    hsv = cv2.convertScaleAbs(hsv, alpha=1, beta=0)
+    #hsv = cv2.convertScaleAbs(hsv, alpha=1, beta=0)
 
 
     red_mask = cv2.inRange(hsv, red_lower, red_upper)                               # Находим красные камни
