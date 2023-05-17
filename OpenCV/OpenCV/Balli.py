@@ -21,13 +21,13 @@ class Balli:
             return self.point
         elif distance_from_center > self.radius_white_Circle and distance_from_center < self.radius_green_Circle:
             #print ("Green Circle")
-            self.point += 15
+            self.point += 80
             return self.point
-        elif distance_from_center > self.radius_green_Circle and distance_from_center < self.radius_blue_Ring:
+        elif distance_from_center > self.radius_green_Circle and distance_from_center < self.radius_white_Ring:
             #print ("White Ring")
             return self.point
-        elif distance_from_center > self.radius_blue_Ring and distance_from_center < self.radius_white_Ring:
-            self.point += 5
+        elif distance_from_center > self.radius_white_Ring and distance_from_center < self.radius_blue_Ring:
+            self.point += 50
             #print ("Blue Ring")
             return self.point 
         else:

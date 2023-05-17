@@ -4,6 +4,8 @@ import socket
 from threading import Thread
 import time
 
+import random
+
 class Robot(Thread):
 
     
@@ -30,8 +32,15 @@ class Robot(Thread):
         self.__print(f"Client with IP {addr} was connected")
         self.conn = conn
         self.__start = lambda: self.conn.sendall(b'start;')
+
+        # Генерируем первое случайное число
+        num1 = random.randint(1, 10)
+
+        # Генерируем второе случайное число
+        num2 = random.randint(1, 10)
+
         self.__cast = lambda path: self.conn.sendall(
-            f'cast;{path[0][0]};{path[0][1]};{path[1][0]};{path[1][1]};{path[2]}'.encode())    #path
+            f'cast;{path[0][0]};{path[0][1]};{path[1][0]};{path[1][1]};{path[2]};{num1};{num2}'.encode())    #path
         self.__wait = lambda: self.conn.sendall(b'wait;')
         self.is_connected = True
 

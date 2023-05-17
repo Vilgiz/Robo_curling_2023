@@ -25,28 +25,22 @@ def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
 
     rocks = [Blue, Red]
     data = []
+
+    rocks = [Blue, Red]
+    data = []
     
-    """ print("###########################")
-
-    print("RED PiPticks:")
-    print(Red)
-    print("BLUE PiPticks:")
-    print(Blue)
-
-    print("###########################") """
 
     for i in range (len(rocks)):
         for point in rocks[i]:
             x_p = point[0]
             y_p = point[1]
             x = x_shift + x_p*cos(angle) - y_p*sin(angle) 
-            y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                #�� ������ -> �� �����
+            y = y_shift + x_p*sin(angle) + y_p*cos(angle)                                                        #�� ������ -> �� �����
             x *= cf
             y *= cf
             data.append([i+1, int(x),int(y)])
-
+            
     return (data) 
-
 
 
 

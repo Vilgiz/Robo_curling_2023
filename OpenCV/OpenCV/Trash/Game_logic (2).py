@@ -121,8 +121,6 @@ def path_searching(solution_matrix, data):
             coef *= -1
             if x1 > max_x: x1 = x2 - i 
             if x1 < min_x: x1 = x2 + i
-            if x1 > max_x: x1 = max_x
-            if x1 < min_x: x1 = min_x
             a = y2 - y1
             b = x1 - x2
             c = x2 * y1 - x1 * y2
@@ -187,7 +185,7 @@ def draw_plt(data, path):
     plt.show()
 
 
-#data = [[1,100,2000],[2,200,1500], [1,0,0], [1,800, 2000], [2,286, 464], [1,407, 1064], [2,732, 118]]
-#path = brain(data)
+data = [[1,100,2000],[2,200,1500], [1,0,0], [1,800, 2000], [2,286, 464], [1,407, 1064], [2,732, 118]]
+path = brain(data)
 #draw_plt(data, path)
-#print(path)
+print(path)

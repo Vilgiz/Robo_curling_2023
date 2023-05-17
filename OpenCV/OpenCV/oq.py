@@ -11,20 +11,21 @@ from Click import MouseCallback
 
 robot = Robot(timeout=10, print_debug=True)
 robot.start()
-Cap = Camera(0)
+Cap = Camera(1)
 
 frame = Cap.get_image()
 call = MouseCallback("Frame Calibration")
 call.get_points(frame)
 pixel_coord = (call.points)
 
+
 red_lower = (0, 140, 120)                                                            # Задаем диапазоны цветов для красного и синего цветов
 red_upper = (10, 200, 255)  
-blue_lower = (90, 70, 20)   
-blue_upper = (120, 220, 100)
+blue_lower = (10, 100, 200)  #(90, 70, 20)   
+blue_upper = (30, 160, 255)     #(120, 220, 100)
 
 min_radius = 30                                                                 # Задаем минимальный и максимальный радиусы
-max_radius = 1000
+max_radius = 100
 
 track_red_pipticks = {}                                                             # МАССИВ С КРАСНЫМИ КАМНЯМИ
 track_id = 0
@@ -40,16 +41,16 @@ arg1 = 1
 arg2 = 2
 
 x_table = 400
-y_table = 1300
+y_table = 1100
 ln = 310
 
 
 center = (400, 1100)
 
-radius_white_Circle = 50
+radius_white_Circle = 30
 radius_green_Circle = 150
-radius_blue_Ring = 260
-radius_white_Ring = 370
+radius_blue_Ring = 390
+radius_white_Ring = 270
 
 Red_scope = Balli(center, radius_white_Circle, radius_green_Circle, radius_blue_Ring, radius_white_Ring)
 Blue_scope = Balli(center, radius_white_Circle, radius_green_Circle, radius_blue_Ring, radius_white_Ring)
@@ -63,6 +64,18 @@ while True:
     frame = Cap.get_image()                                  
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    # Преобразуем изображение в цветовое пространство HSV
+
+    """ # Увеличиваем контрастность канала яркости (Value)
+    v = hsv[:,:,2]
+    alpha = 1.5  # масштабный коэффициент
+    beta = 0    # смещение
+    new_v = cv2.convertScaleAbs(v, alpha=alpha, beta=beta)
+
+    # Обновляем канал яркости в изображении HSV
+    hsv[:,:,2] = new_v
+
+    # Преобразуем изображение обратно в цветовое пространство BGR
+    frame = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR) """
 
     red_mask = cv2.inRange(hsv, red_lower, red_upper)                               # Находим красные камни
     red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -96,7 +109,7 @@ while True:
             for pt2 in red_pipticks_prev_frame:
                 distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
                 
-                if distance < 70:                                                   # размер погрешности движения одного и того же объекта
+                if distance < 100:                                                   # размер погрешности движения одного и того же объекта
                     track_red_pipticks[track_id] = pt
                     track_id += 1
 
@@ -109,7 +122,7 @@ while True:
             for pt in red_pipticks_current_frame_copy:
                 distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
                 # Обновлениие позиции камня
-                if distance < 30:                                                   # размер погрешности движения одного и того же объекта
+                if distance < 100:                                                   # размер погрешности движения одного и того же объекта
                     track_red_pipticks[obj_id] = pt
                     obj_exists = True
                     if pt in red_pipticks_current_frame:
@@ -137,7 +150,7 @@ while True:
             for pt2_blue in blue_pipticks_prev_frame:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 
-                if distance_blue < 70:                                              # размер погрешности движения одного и того же объекта
+                if distance_blue < 100:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[track_id_blue] = pt_blue
                     track_id_blue += 1
 
@@ -150,7 +163,7 @@ while True:
             for pt_blue in blue_pipticks_current_frame_copy:
                 distance_blue = math.hypot(pt2_blue[0] - pt_blue[0], pt2_blue[1] - pt_blue[1])
                 # Обновлениие позиции камня
-                if distance_blue < 30:                                              # размер погрешности движения одного и того же объекта
+                if distance_blue < 100:                                              # размер погрешности движения одного и того же объекта
                     track_blue_pipticks[obj_id_blue] = pt_blue
                     obj_exists_blue = True
                     if pt_blue in blue_pipticks_current_frame:
@@ -173,17 +186,6 @@ while True:
 
 
 
-   
-#######################################################################################
-
-    #print("###########################")
-
-    #print("RED PiPticks:")
-    #print(track_red_pipticks)
-    #print("BLUE PiPticks:")
-    #print(track_blue_pipticks)
-
-    #print("###########################")
 
     cv2.imshow('frame', frame)                                                   
     
@@ -193,12 +195,7 @@ while True:
 
     BLUE = tuple(track_blue_pipticks.items())
     RED = tuple(track_red_pipticks.items())
-    #print("Watch on your piptic 0_0")
 
-    #print("RED")
-    #print(RED)
-    #print("BLUE")
-    #print(BLUE)
 
     cv2.waitKey(1) 
 
@@ -207,6 +204,9 @@ while True:
     if count % 20 == 0:
         while True: 
             if (True):
+                
+                Red_scope.point = 0
+                Blue_scope.point = 0
 
                 RED_COORD = []
                 for pip in RED:
@@ -217,7 +217,22 @@ while True:
                     BLUE_COORD.append(pip[1])
 
 
-                data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, RED_COORD, BLUE_COORD)
+                """RED_COORD_2 = []
+                for i in range (len(RED_COORD)):
+                    for pip in RED_COORD[i]:
+                        if i == len(RED_COORD):
+                            break
+
+                        if pip - RED_COORD[i+1][0] > 10 or pip - RED_COORD[i+1][1]> 10:
+                            RED_COORD_2.append(pip)
+                            i += 1
+                
+                print (RED_COORD)
+                print (RED_COORD_2)"""
+                
+
+
+                data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, BLUE_COORD, RED_COORD)
                 print(data)
 
                 target = brain (data) 
@@ -232,7 +247,7 @@ while True:
                 for color_piptic in data:
                     VR_BLUE_COORD = []
                     VR_RED_COORD = []
-                    if color_piptic[0] == 0:
+                    if color_piptic[0] == 2:
                         VR_RED_COORD.append(color_piptic[1])
                         VR_RED_COORD.append(color_piptic[2])
                         RED_COORD.append(VR_RED_COORD)
@@ -251,14 +266,22 @@ while True:
                     print(Red_scope.point)
                     for quantity in range (len(RED_COORD)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
                         Red_scope.Which_field(Red_scope.iteration_of_piptics(RED_COORD, quantity))
-                    print(Red_scope.point)
+                    #print(Red_scope.point)
+
+
 
                 if type(BLUE_COORD) == int:
-                   print(Blue_scope.point)
+                    print(Blue_scope.point)
                 else:
+                    print(Blue_scope.point)
                     for quantity in range (len(BLUE_COORD)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
                         Blue_scope.Which_field(Blue_scope.iteration_of_piptics(BLUE_COORD, quantity))
-                    print(Blue_scope.point)
+                    #print(Blue_scope.point)
+
+                print("RED Scope")
+                print(Red_scope.point)
+                print("BLUE Scope")
+                print(Blue_scope.point)
 
                 draw_plt(data, target) 
                 cv2.waitKey(0) 

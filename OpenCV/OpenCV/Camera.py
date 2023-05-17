@@ -32,18 +32,18 @@ class Camera:
 
 
 
+""" 
+def main():                                             # тест
+    Cap = Camera(1)
 
-#def main():                                             # тест
- #   Cap = Camera(1)
+    while True:
+        Frame = Cap.get_image()
+        cv2.imshow('frame', Frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-  #  while True:
-   #     Frame = Cap.get_image()
-    #    cv2.imshow('frame', Frame)
-     #   if cv2.waitKey(1) & 0xFF == ord('q'):
-      #      break
-
-#    cap.release()
- #   cv2.destroyAllWindows()
+    Cap.release()
+    cv2.destroyAllWindows()
     
-#main()
+main() """
 
