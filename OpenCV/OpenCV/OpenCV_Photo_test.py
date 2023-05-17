@@ -5,7 +5,7 @@ import numpy
 from Camera import Camera
 
 
-Cam = Camera(1)
+Cam = Camera()
 frame = Cam.get_image()
 
 img = frame
@@ -16,8 +16,8 @@ img = frame
 #red_upper = (190, 255, 255) 
 
  
-lower_green = (0, 130, 140)                          # Определение диапазона нужного цвета в HSV
-upper_green = (10, 200, 255)  
+lower_green = (20, 70, 210)                          # Определение диапазона нужного цвета в HSV
+upper_green = (25, 180, 255) 
 
 
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)              # Преобразование изображения в цветовую модель HSV
