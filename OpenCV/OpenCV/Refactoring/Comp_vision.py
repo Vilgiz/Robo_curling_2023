@@ -70,11 +70,9 @@ class Vision():
             for pt in self.rocks_curr_frame:
                 for pt2 in self.rocks_prev_frame :
                     self.distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
-                    
-                    if self.distance < 50:                                              # размер погрешности движения одного и того же объекта
+                    if self.distance < 50:                                            
                         self.track_rocks[self.track_id] = pt
                         self.track_id += 1
-
         else: 
             self.track_rocks_copy = self.track_rocks.copy()
             self.rocks_curr_frame_copy = self.rocks_curr_frame.copy()
@@ -83,17 +81,14 @@ class Vision():
                 self.obj_exists = False
                 for pt in self.rocks_curr_frame_copy:
                     self.distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
-                    # Обновлениие позиции камня
-                    if self.distance < 50:                                              # размер погрешности движения одного и того же объекта
+                    if self.distance < 50:                                             
                         self.track_rocks[self.obj_id] = pt
                         self.obj_exists = True
                         if pt in self.rocks_curr_frame:
                             self.rocks_curr_frame.remove(pt)
                             continue
-                    # Удаление id
                 if not self.obj_exists:
-                    self.track_rocks.pop(self.obj_id) # add list
-    
+                    self.track_rocks.pop(self.obj_id)
             for pt in self.rocks_curr_frame:
                 self.track_rocks[self.track_id] = pt
                 self.track_id += 1
@@ -104,6 +99,60 @@ class Vision():
             cv2.putText(frame, str(self.obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
 
         cv2.imshow('frame',frame)                                                   
-    
         self.rocks_prev_frame  = self.rocks_curr_frame.copy()
+        self.check()
+        pass
+
+    def trans_coord(self):
+        self.track_rocks_temp = tuple(self.track_rocks.items())
+        self.track_only_coord = []
+        for i in self.track_rocks_temp:
+            self.track_only_coord.append(i[1])
+
+    def check(self): 
+        self.trans_coord()
+        self.track_ROCKS = []
+        for pip in range (len(self.track_only_coord)):
+            if pip == len(self.track_only_coord) - 1:
+                self.track_ROCKS.append([self.track_only_coord[pip][0],self.track_only_coord[pip][1]])
+                break 
+            distance = math.sqrt((self.track_only_coord[pip][0] - self.track_only_coord[pip+1][1])**2 +
+                                 (self.track_only_coord[pip][1] - self.track_only_coord[pip+1][1])**2)
+            if distance > 5:
+                self.track_ROCKS.append([self.track_only_coord[pip][0],self.track_only_coord[pip][1]])
+
+    """ def transform(x_table, y_table, c_point, p1, p2, ln, Red, Blue):
+        x1 = p1[0]
+        x2 = p2[0]
+        y1 = p1[1]
+        y2 = p2[1]
+        angle = math.atan2(x2-x1,y2-y1)
+        
+        cf = ln / math.sqrt((x2-x1)**2 + (y2-y1)**2)
+        
+        x_cp = c_point[0]*math.cos(angle) - c_point[1]*math.sin(angle)
+        y_cp = c_point[0]*math.sin(angle) + c_point[1]*math.cos(angle)
+        
+        x_cp *= cf
+        y_cp *= cf
+        
+        x_shift = x_table - x_cp
+        y_shift = y_table - y_cp
+        
+        rocks = [Blue, Red]
+        Data = []
+        
+        for i in range (len(rocks)):
+            for point in rocks[i]:
+                x_p = point[0]
+                y_p = point[1]
+                x = x_shift + x_p*math.cos(angle) - y_p*math.sin(angle) 
+                y = y_shift + x_p*math.sin(angle) + y_p*math.cos(angle)                                                        #�� ������ -> �� �����
+                x *= cf
+                y *= cf
+                Data.append([i+1, int(x),int(y)])
+        return Data """
+    
+    def Colibrate(self):
+
         pass

@@ -231,7 +231,8 @@ while True:
                 print("blue_AFTER")
                 print (BLUE_COORD_2)
 
-                data = pos_transformation(x_table, y_table, pixel_coord[0], pixel_coord[1], pixel_coord[2], ln, BLUE_COORD, RED_COORD)
+                data = pos_transformation(x_table, y_table, pixel_coord[0], 
+                                          pixel_coord[1], pixel_coord[2], ln, BLUE_COORD_2, RED_COORD_2)
                 #print(data)
 
                 target = brain (data) 

@@ -1,5 +1,6 @@
 from math import atan2, sin, cos, sqrt
 
+
 def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
     x1 = p1[0]
     x2 = p2[0]
@@ -37,4 +38,3 @@ def pos_transformation (x_table, y_table, c_point, p1, p2, ln, Red, Blue):
             data.append([i+1, int(x),int(y)])
             
     return (data) 
-
