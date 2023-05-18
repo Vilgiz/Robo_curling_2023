@@ -49,8 +49,8 @@ class Vision():
                                     glob_const.min_radius, glob_const.max_radius) """
         ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
         ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
-        circles = cv2.HoughCircles(Blur, cv2.HOUGH_GRADIENT, 1, 250, param1=50, param2=30, 
-                                   minRadius=60, maxRadius=300)            
+        circles = cv2.HoughCircles(Blur, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, 
+                                   minRadius=10, maxRadius=3000)            
         ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
         ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
         if circles is not None:

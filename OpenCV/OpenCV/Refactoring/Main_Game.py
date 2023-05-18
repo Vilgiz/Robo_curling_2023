@@ -29,7 +29,10 @@ while True:
     if Vis_RED.count % 20 == 0:
         while True:  
             print("RED")
-            print(Vis_RED.track_ROCKS)               
+            print(Vis_RED.track_ROCKS)        
+
+            print("YELL")
+            print(Vis_RED.track_ROCKS)        
             """ Red_scope.point = 0
             Blue_scope.point = 0 """
 
