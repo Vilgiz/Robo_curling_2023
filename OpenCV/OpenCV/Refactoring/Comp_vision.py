@@ -39,9 +39,6 @@ class Vision():
         self.rocks_curr_frame = []
         self.rocks_curr_frame = []
 
-        Cap = Camera()                                          ##  TODO: убрать костыль
-        self.frame = Cap.get_image() 
-
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    
         Mask = cv2.inRange(hsv, lower, upper)                        
         Blur = cv2.GaussianBlur(Mask, (5, 5), 0)
@@ -68,7 +65,7 @@ class Vision():
                 self.center_cv = (x_cv,y_cv)
                 self.rocks_curr_frame.append((int(x_cv),int(y_cv))) 
 
-    def Find_Rocks(self): 
+    def Find_Rocks(self, frame): 
         if self.count <= 2:
             for pt in self.rocks_curr_frame:
                 for pt2 in self.rocks_prev_frame :
@@ -106,7 +103,7 @@ class Vision():
             cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
             cv2.putText(frame, str(self.obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
 
-        cv2.imshow('frame', frame)                                                   
+        cv2.imshow('frame',frame)                                                   
     
         self.rocks_prev_frame  = self.rocks_curr_frame.copy()
         pass

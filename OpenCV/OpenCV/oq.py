@@ -205,7 +205,6 @@ while True:
                         break 
                     distance = math.sqrt((RED_COORD[pip][0] - RED_COORD[pip+1][1])**2 +
                                      (RED_COORD[pip][1] - RED_COORD[pip+1][1])**2)
-                    
                     if distance > 5:
                         RED_COORD_2.append([RED_COORD[pip][0],RED_COORD[pip][1]])
                     
@@ -219,7 +218,6 @@ while True:
                     y_shift = BLUE_COORD[pip][1] - BLUE_COORD[pip+1][1]
                     distance = math.sqrt((BLUE_COORD[pip][0] - BLUE_COORD[pip+1][1])**2 +
                                      (BLUE_COORD[pip][1] - BLUE_COORD[pip+1][1])**2)
-                    
                     if distance > 5:
                         BLUE_COORD_2.append([BLUE_COORD[pip][0],BLUE_COORD[pip][1]])
 
