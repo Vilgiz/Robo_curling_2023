@@ -40,6 +40,11 @@ class Field():
             self.centers.append(buf)
 
 
+
+class Rock():
+    def __init__():
+        pass  
+
 class Brain():
     def __init__(self):
         self.Field = Field()
