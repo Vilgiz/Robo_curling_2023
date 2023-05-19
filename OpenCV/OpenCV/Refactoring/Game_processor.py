@@ -61,7 +61,10 @@ class Brain():
         self.safe_distance = config.safe_distance
         self.variability = config.variability
         self.hard_mode = False #config.hard_mode
+        self.easy_mode = True
         self.destroy_rad = config.destroy_rad
+        self.start_safe_rad = config.start_safe_rad
+        self.error_limit = config.error_limit
 
     #def __load_defaults(self):
 
@@ -110,7 +113,7 @@ class Brain():
                 coef = surround [0] - surround [1]
                 solution_matrix.append([10 + coef,'destroy',[data[i][1], data[i][2]]])
             elif (data[i][0] == 1) and (data[i][3] != 0):
-                print(self.embedded_sectors)
+                #print(self.embedded_sectors)
                 if self.embedded_sectors[data[i][3]-1][data[i][4]] == 1:
                     surround = self.__near_field_check(self.destroy_rad, i)
                     if surround [1] > 1:
@@ -164,9 +167,19 @@ class Brain():
             buf = sorted(buf, key=lambda x: abs(x[0][0]-x[1][0]))
             if buf: 
                 path.append(buf)
-        result = path[:min(len(path), self.variability)]
+        #result = path[:min(len(path), self.variability)]
 
-        return (result)
+        return (path)
+    
+    
+    def __safety_check(self, result):
+        if (0<result[0][0]<800)and (0<result[1][0]<800) and (10<result[0][1]):
+            for point in self.data:
+                if ((result[0][0]-self.start_safe_rad < point[1] < result[0][0]+self.start_safe_rad) and
+                    (self.start_y - self.start_safe_rad < point[2] < self.start_y + self.start_safe_rad)):
+                    return False
+            return(True)
+        else: return (False)
     
     def draw_plt(self):
 
@@ -200,23 +213,39 @@ class Brain():
 
     
     def solve(self):
-        variants = self.__path_searching()
-        print(variants)
-        if self.hard_mode: result = variants[0][randint(0,min(len(variants[0]),3)-1)]
-        else: 
-            i = randint(0,min(len(variants)-1,self.variability))
-            result = variants[i][randint(0,len(variants[i])-1)]
-        self.result = result
-        return(self.result)
+        count = 0
+        while True:
+            count +=1
+            variants = self.__path_searching()
+            #print(variants)
+            if self.hard_mode: result = variants[0][randint(0,min(len(variants[0]),3)-1)]
+            elif self.easy_mode:
+                i = randint(0, len(variants)-1)
+                result = variants[i][randint(0,len(variants[i])-1)]   
+            else: 
+                i = randint(0,min(len(variants)-1,self.variability))
+                result = variants[i][randint(0,len(variants[i])-1)]
+
+            if self.__safety_check(result):
+                self.result = result
+                return(result)
+                break
+            if count > self.error_limit:
+                return('[ERROR]: no one variant is safety')
+                #следующая итерация - придумать, что делать в таких случаях
+
 
     def take_data(self, Robot, Human):
         #тут для формата данных [[x,y],[x,y]...]
         self.data = [[2] + buf for buf in Robot] + [[1] + buf for buf in Human]
+
+    def update_settings(self):
+        self.__init__()
         
 
 if __name__ == '__main__':
     brain = Brain()
-    data1 = [[200,800], [400,550], [400,1100]]
+    data1 = [[200,800], [400,550], [400,1100],[400,11], [620,-10]]
     data2 = [[150,980], [400,1400]]
 
     brain.take_data(Robot = data2, Human = data1)
