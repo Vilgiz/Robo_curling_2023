@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
-        brain = Brain()
+        brain = Brain() 
         print("RED")
         print(Vis_RED.RED_ROCKS)
         print("YELL")
