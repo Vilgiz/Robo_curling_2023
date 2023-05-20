@@ -1,37 +1,42 @@
 import cv2
 import math
 import numpy as np
+from Camera import Camera
+from Game_processor import Brain
+import settings as config
 
-import settings as glob_const
+# !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
+# !!!  и было бы мега классно в нем не так часто писать слово self. ---- хз, как это сделать
 
-############# !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
-############# !!!  и было бы мега классно в нем не так часто писать слово self. ---- хз, как это сделать
 
 class COLOR_TEST():
     def __init__(self) -> None:
-        self.lower = glob_const.test_lower
-        self.upper = glob_const.test_upper
+        self.lower = config.test_lower
+        self.upper = config.test_upper
+
 
 class COLOR_RED():
     def __init__(self) -> None:
-        self.lower = glob_const.red_lower
-        self.upper = glob_const.red_upper
+        self.lower = config.red_lower
+        self.upper = config.red_upper
+
 
 class COLOR_YELL():
     def __init__(self) -> None:
-        self.lower = glob_const.yell_lower
-        self.upper = glob_const.yell_upper
+        self.lower = config.yell_lower
+        self.upper = config.yell_upper
+
 
 class Vision():
 
     def __init__(self, COLOR) -> None:
-        self.track_rocks = {}                                                       
-        self.track_id = 0                                                      
-        self.rocks_prev_frame = []                          
-        self.rocks_curr_frame = []      
+        self.track_rocks = {}
+        self.track_id = 0
+        self.rocks_prev_frame = []
+        self.rocks_curr_frame = []
         self.lower = COLOR.lower
         self.upper = COLOR.upper
-        self.count = 0  
+        self.count = 0
         self.param1 = 1
         self.param2 = 0.42
         self.RED_ROCKS = []
@@ -41,11 +46,11 @@ class Vision():
         self.count += 1
         self.rocks_curr_frame = []
         self.rocks_curr_frame = []
-        self.hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
-        self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) 
-        self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) 
-        circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2, 
-                                   minRadius=50, maxRadius=60)            
+        self.hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2,
+                                   minRadius=50, maxRadius=60)
         if circles is not None:
             circles = np.uint16(np.around(circles))
             red_circles = []
@@ -55,18 +60,18 @@ class Vision():
                 self.radius_cv = int(circle[2])
                 x_cv = circle[0]
                 y_cv = circle[1]
-                self.center_cv = (x_cv,y_cv)
-                self.rocks_curr_frame.append((int(x_cv),int(y_cv))) 
+                self.center_cv = (x_cv, y_cv)
+                self.rocks_curr_frame.append((int(x_cv), int(y_cv)))
 
-    def Find_Rocks(self, frame): 
+    def Find_Rocks(self, frame):
         if self.count <= 2:
             for pt in self.rocks_curr_frame:
-                for pt2 in self.rocks_prev_frame :
+                for pt2 in self.rocks_prev_frame:
                     self.distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
-                    if self.distance < 50:                                            
+                    if self.distance < 50:
                         self.track_rocks[self.track_id] = pt
                         self.track_id += 1
-        else: 
+        else:
             self.track_rocks_copy = self.track_rocks.copy()
             self.rocks_curr_frame_copy = self.rocks_curr_frame.copy()
 
@@ -74,7 +79,7 @@ class Vision():
                 self.obj_exists = False
                 for pt in self.rocks_curr_frame_copy:
                     self.distance = math.hypot(pt2[0] - pt[0], pt2[1] - pt[1])
-                    if self.distance < 50:                                             
+                    if self.distance < 50:
                         self.track_rocks[self.obj_id] = pt
                         self.obj_exists = True
                         if pt in self.rocks_curr_frame:
@@ -84,60 +89,84 @@ class Vision():
                     self.track_rocks.pop(self.obj_id)
             for pt in self.rocks_curr_frame:
                 self.track_rocks[self.track_id] = pt
-                self.track_id += 1                                                  
-        self.rocks_prev_frame  = self.rocks_curr_frame.copy()
-        self.check()
-        self.show_circle(frame) 
-        self.Red_Yell_array(frame)
-        cv2.imshow('frame',frame)
+                self.track_id += 1
+        self.rocks_prev_frame = self.rocks_curr_frame.copy()
+        self.__check()
+        self.__show_circle(frame)
+        self.__Red_Yell_array(frame)
+        cv2.imshow('frame', frame)
         """ if self.count == 1:
             cv2.createTrackbar('param1', 'frame', 1, 1000, self.__onChange1)   
             cv2.createTrackbar('param2', 'frame', 1, 1000, self.__onChange2)  """
 
-
-    def show_circle(self, frame):
+    def __show_circle(self, frame):
         for self.obj_id, pt in self.track_rocks.items():
             self.center_cv = pt
             cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
             cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
-            cv2.putText(frame, str(self.obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
+            cv2.putText(frame, str(self.obj_id),
+                        (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2)
 
-    def trans_coord(self):
+    def __trans_coord(self):
         self.track_rocks_temp = tuple(self.track_rocks.items())
         self.track_only_coord = []
         for i in self.track_rocks_temp:
             self.track_only_coord.append(i[1])
 
-    def check(self): 
-        self.trans_coord()
+    def __check(self):
+        self.__trans_coord()
         self.track_ROCKS = []
-        for pip in range (len(self.track_only_coord)):
+        for pip in range(len(self.track_only_coord)):
             if pip == len(self.track_only_coord) - 1:
-                self.track_ROCKS.append([self.track_only_coord[pip][0],self.track_only_coord[pip][1]])
-                break 
+                self.track_ROCKS.append(
+                    [self.track_only_coord[pip][0], self.track_only_coord[pip][1]])
+                break
             distance = math.sqrt((self.track_only_coord[pip][0] - self.track_only_coord[pip+1][1])**2 +
                                  (self.track_only_coord[pip][1] - self.track_only_coord[pip+1][1])**2)
             if distance > 5:
-                self.track_ROCKS.append([self.track_only_coord[pip][0],self.track_only_coord[pip][1]])
+                self.track_ROCKS.append(
+                    [self.track_only_coord[pip][0], self.track_only_coord[pip][1]])
 
     def __onChange1(self, value1):
         self.param1 = value1
-    
+
     def __onChange2(self, value2):
         value2 = (value2 / 1000) - 0.001
         self.param2 = value2
- 
-    def Red_Yell_array(self, frame):
+
+    def __Red_Yell_array(self, frame):
+        self.RED_ROCKS = []
+        self.YELL_ROCKS = []
         for j in self.track_ROCKS:
-            x,y = j
+            x, y = j
             pixel_color = self.hsv[y, x]
             tmp_array = pixel_color.astype(np.int64)
 
-            if np.all(tmp_array > glob_const.red_lower) and np.all(tmp_array > glob_const.red_lower):
+            if np.all(tmp_array > config.red_lower) and np.all(tmp_array > config.red_upper):
                 self.RED_ROCKS.append(j)
-            elif np.all(tmp_array > glob_const.yell_lower) and np.all(tmp_array > glob_const.yell_lower):
+            elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array > config.yell_upper):
                 self.YELL_ROCKS.append(j)
 
-    def Colibrate(self):
 
-        pass
+if __name__ == '__main__':
+    camera = Camera()
+    RED_COLOR = COLOR_RED()
+
+    Vis_RED = Vision(RED_COLOR)
+
+    while True:
+        warped_image = camera.get_image()
+        cv2.waitKey(0)
+
+        Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
+        Vis_RED.Find_Rocks(warped_image)
+        brain = Brain()
+        print("RED")
+        print(Vis_RED.RED_ROCKS)
+        print("YELL")
+        print(Vis_RED.YELL_ROCKS)
+
+        brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
+        res = brain.solve()
+        print(res)
+        brain.draw_plt()

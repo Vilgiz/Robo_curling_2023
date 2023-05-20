@@ -25,20 +25,22 @@ while True:
 
     key = cv2.waitKey(1)
     if key == ord('q'):
-            ipi.aruco_calibration(frame)
-            #frame = ipi.warp(frame)
-            ipi.save_settings()
-            break
+        ipi.aruco_calibration(frame)
+        frame = ipi.warp(frame)
+        ipi.save_settings()
+        break
     if key == ord('w'):
-            ipi.warp(frame)
+        ipi.warp(frame)
     if key == ord('c'):
-            calib_list.append(frame.copy())
-            print(len(calib_list))
+        calib_list.append(frame.copy())
+        print(len(calib_list))
     if key == ord('b'):
-            calib_list.clear()
-            
-print('tsssssssss')
-warped_image = ipi.warp(frame)
-cv2.imshow('warped_image', warped_image)
+        calib_list.clear()
 
-
+# Vis_RED.Find_contors(frame, RED_COLOR.lower, RED_COLOR.upper)
+# Vis_RED.Find_Rocks(frame)
+while True:
+    print('tsssssssss')
+    warped_image = ipi.warp(frame)
+    cv2.imshow('warped_image', warped_image)
+    cv2.waitKey(1)
