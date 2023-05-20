@@ -2,7 +2,6 @@ import cv2
 import math
 import numpy as np
 
-from Camera import Camera
 import settings as glob_const
 
 ############# !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
@@ -33,26 +32,20 @@ class Vision():
         self.lower = COLOR.lower
         self.upper = COLOR.upper
         self.count = 0  
+        self.param1 = 1
+        self.param2 = 0.42
+        self.RED_ROCKS = []
+        self.YELL_ROCKS = []
 
     def Find_contors(self, frame, lower, upper):
         self.count += 1
         self.rocks_curr_frame = []
         self.rocks_curr_frame = []
-
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                    
-        Mask = cv2.inRange(hsv, lower, upper)                        
-        Blur = cv2.GaussianBlur(Mask, (5, 5), 0)
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!                                             
-        """ circles = cv2.HoughCircles(Blur, cv2.HOUGH_GRADIENT, 1, glob_const.min_dist, 
-                                    glob_const.accuracy, glob_const.sensitivity, 
-                                    glob_const.min_radius, glob_const.max_radius) """
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
-        circles = cv2.HoughCircles(Blur, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, 
-                                   minRadius=10, maxRadius=3000)            
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
-        ## ! ПОМЕНЯТЬ, СУКА, НЕ ОТЛАЖЕНО !!!!!!!
+        self.hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+        self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) 
+        self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) 
+        circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2, 
+                                   minRadius=50, maxRadius=60)            
         if circles is not None:
             circles = np.uint16(np.around(circles))
             red_circles = []
@@ -91,17 +84,23 @@ class Vision():
                     self.track_rocks.pop(self.obj_id)
             for pt in self.rocks_curr_frame:
                 self.track_rocks[self.track_id] = pt
-                self.track_id += 1
+                self.track_id += 1                                                  
+        self.rocks_prev_frame  = self.rocks_curr_frame.copy()
+        self.check()
+        self.show_circle(frame) 
+        self.Red_Yell_array(frame)
+        cv2.imshow('frame',frame)
+        """ if self.count == 1:
+            cv2.createTrackbar('param1', 'frame', 1, 1000, self.__onChange1)   
+            cv2.createTrackbar('param2', 'frame', 1, 1000, self.__onChange2)  """
 
+
+    def show_circle(self, frame):
         for self.obj_id, pt in self.track_rocks.items():
+            self.center_cv = pt
             cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
             cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
             cv2.putText(frame, str(self.obj_id), (pt[0], pt[1] - 7), 0, 1, (0,0,255), 2)
-
-        cv2.imshow('frame',frame)                                                   
-        self.rocks_prev_frame  = self.rocks_curr_frame.copy()
-        self.check()
-        pass
 
     def trans_coord(self):
         self.track_rocks_temp = tuple(self.track_rocks.items())
@@ -121,38 +120,24 @@ class Vision():
             if distance > 5:
                 self.track_ROCKS.append([self.track_only_coord[pip][0],self.track_only_coord[pip][1]])
 
-    """ def transform(x_table, y_table, c_point, p1, p2, ln, Red, Blue):
-        x1 = p1[0]
-        x2 = p2[0]
-        y1 = p1[1]
-        y2 = p2[1]
-        angle = math.atan2(x2-x1,y2-y1)
-        
-        cf = ln / math.sqrt((x2-x1)**2 + (y2-y1)**2)
-        
-        x_cp = c_point[0]*math.cos(angle) - c_point[1]*math.sin(angle)
-        y_cp = c_point[0]*math.sin(angle) + c_point[1]*math.cos(angle)
-        
-        x_cp *= cf
-        y_cp *= cf
-        
-        x_shift = x_table - x_cp
-        y_shift = y_table - y_cp
-        
-        rocks = [Blue, Red]
-        Data = []
-        
-        for i in range (len(rocks)):
-            for point in rocks[i]:
-                x_p = point[0]
-                y_p = point[1]
-                x = x_shift + x_p*math.cos(angle) - y_p*math.sin(angle) 
-                y = y_shift + x_p*math.sin(angle) + y_p*math.cos(angle)                                                        #�� ������ -> �� �����
-                x *= cf
-                y *= cf
-                Data.append([i+1, int(x),int(y)])
-        return Data """
+    def __onChange1(self, value1):
+        self.param1 = value1
     
+    def __onChange2(self, value2):
+        value2 = (value2 / 1000) - 0.001
+        self.param2 = value2
+ 
+    def Red_Yell_array(self, frame):
+        for j in self.track_ROCKS:
+            x,y = j
+            pixel_color = self.hsv[y, x]
+            tmp_array = pixel_color.astype(np.int64)
+
+            if np.all(tmp_array > glob_const.red_lower) and np.all(tmp_array > glob_const.red_lower):
+                self.RED_ROCKS.append(j)
+            elif np.all(tmp_array > glob_const.yell_lower) and np.all(tmp_array > glob_const.yell_lower):
+                self.YELL_ROCKS.append(j)
+
     def Colibrate(self):
 
         pass

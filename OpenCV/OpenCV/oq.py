@@ -278,7 +278,7 @@ while True:
                 print("BLUE Scope")
                 print(Blue_scope.point)
 
-                draw_plt(data, target) 
+                #draw_plt(data, target) 
                 cv2.waitKey(0) 
 
                 break

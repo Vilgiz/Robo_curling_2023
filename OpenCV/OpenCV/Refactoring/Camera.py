@@ -128,7 +128,7 @@ class Camera:
         camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.resolution[1])
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[0])
         print('Warming up the camera')
-        for i in range(50):
+        for i in range(20):
             print('/|\\-'[i % 4]+'\r', end='')
             _, frame = camera.read()
             cv2.waitKey(10)

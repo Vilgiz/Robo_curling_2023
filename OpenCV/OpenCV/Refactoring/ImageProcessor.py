@@ -189,7 +189,7 @@ class ImageProcessor():
         warped_image = warped_image[markers[1].topRight[1]:-1, markers[1].topRight[0]:-1]
         cv2.namedWindow('g', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('g', warped_image)
-        #cv2.waitKey(100)
+        return warped_image
         pass
 
 ##########################
