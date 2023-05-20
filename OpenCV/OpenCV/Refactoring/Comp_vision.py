@@ -162,7 +162,7 @@ if __name__ == '__main__':
         Vis_RED.Find_Rocks(warped_image)
         brain = Brain() 
         print("RED")
-        print(Vis_RED.RED_ROCKS) 
+        print(Vis_RED.RED_ROCKS)  
         print("YELL") 
         print(Vis_RED.YELL_ROCKS)
 
