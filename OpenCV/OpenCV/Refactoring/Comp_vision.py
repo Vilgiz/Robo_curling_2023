@@ -151,7 +151,7 @@ class Vision():
 if __name__ == '__main__':
     camera = Camera()
     RED_COLOR = COLOR_RED()
-
+ 
     Vis_RED = Vision(RED_COLOR)
 
     while True:
