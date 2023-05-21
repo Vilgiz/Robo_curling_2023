@@ -5,11 +5,13 @@ import os
 import json
 from Camera import Camera
 
+
 class Marker():
     def __init__(self, id, center, corners):
         self.id = id
         self.center = center
         [self.topLeft, self.topRight, self.bottomRight, self.bottomLeft] = corners
+
 
 class ImageProcessor():
     def __init__(self):
@@ -42,14 +44,16 @@ class ImageProcessor():
 
     def __detectArucoMarkers(self, image):
         markers = {}
-        arucoDictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+        arucoDictionary = cv2.aruco.getPredefinedDictionary(
+            cv2.aruco.DICT_4X4_50)
         arucoParameters = cv2.aruco.DetectorParameters()
-        (corners, ids, rejected) = cv2.aruco.detectMarkers(image, arucoDictionary, parameters=arucoParameters)
+        (corners, ids, rejected) = cv2.aruco.detectMarkers(
+            image, arucoDictionary, parameters=arucoParameters)
 
         if len(corners) != 3:
             print('[ERROR] Could not find all three markers')
             return None
-        
+
         ids = ids.flatten()
         for (markerCorner, markerID) in zip(corners, ids):
             corners = markerCorner.reshape((4, 2))
@@ -61,79 +65,79 @@ class ImageProcessor():
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
             print("[INFO] ArUco marker ID: {}".format(markerID))
-            markers[markerID] = Marker(markerID, [cX, cY], [topLeft, topRight, bottomRight, bottomLeft])
+            markers[markerID] = Marker(
+                markerID, [cX, cY], [topLeft, topRight, bottomRight, bottomLeft])
         return markers
 
     def __get_rotaion_matrix(self, markers):
         marker1 = markers[1]
         marker2 = markers[2]
         marker3 = markers[3]
-        self.rotation_angle = -math.atan((marker2.topRight[0] - marker1.topRight[0])/(marker2.topRight[1] - marker1.topRight[1]))
-        self.rotation_matrix = cv2.getRotationMatrix2D(self.image_center, self.rotation_angle*180/math.pi, 1.0)
+        self.rotation_angle = -math.atan((marker2.topRight[0] - marker1.topRight[0])/(
+            marker2.topRight[1] - marker1.topRight[1]))
+        self.rotation_matrix = cv2.getRotationMatrix2D(
+            self.image_center, self.rotation_angle*180/math.pi, 1.0)
 
     def chessboard_calibration(self, image_list):
-        #image = image.copy()
+        # image = image.copy()
         CHECKERBOARD = (5, 8)
-        criteria = (cv2.TERM_CRITERIA_EPS + 
-            cv2.TERM_CRITERIA_MAX_ITER, 80, 0.0001)
+        criteria = (cv2.TERM_CRITERIA_EPS +
+                    cv2.TERM_CRITERIA_MAX_ITER, 80, 0.0001)
         # Vector for 3D points
         threedpoints = []
-        
+
         # Vector for 2D points
         twodpoints = []
-        
-        
+
         #  3D points real world coordinates
-        objectp3d = np.zeros((1, CHECKERBOARD[0] 
-                            * CHECKERBOARD[1], 
-                            3), np.float32)
+        objectp3d = np.zeros((1, CHECKERBOARD[0]
+                              * CHECKERBOARD[1],
+                              3), np.float32)
         objectp3d[0, :, :2] = np.mgrid[0:CHECKERBOARD[0],
-                                    0:CHECKERBOARD[1]].T.reshape(-1, 2)
+                                       0:CHECKERBOARD[1]].T.reshape(-1, 2)
         prev_img_shape = None
 
         for image in image_list:
             grayColor = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             ret, corners = cv2.findChessboardCorners(
-                            grayColor, CHECKERBOARD, 
-                            cv2.CALIB_CB_ADAPTIVE_THRESH 
-                            + cv2.CALIB_CB_FAST_CHECK + 
-                            cv2.CALIB_CB_NORMALIZE_IMAGE)
-        
+                grayColor, CHECKERBOARD,
+                cv2.CALIB_CB_ADAPTIVE_THRESH
+                + cv2.CALIB_CB_FAST_CHECK +
+                cv2.CALIB_CB_NORMALIZE_IMAGE)
+
             if ret == True:
                 threedpoints.append(objectp3d)
                 corners2 = cv2.cornerSubPix(
-                    grayColor, corners, (11, 11), (-1, -1), criteria)  
+                    grayColor, corners, (11, 11), (-1, -1), criteria)
                 twodpoints.append(corners2)
-                image = cv2.drawChessboardCorners(image, 
-                                                CHECKERBOARD, 
-                                                corners2, ret)
-        
+                image = cv2.drawChessboardCorners(image,
+                                                  CHECKERBOARD,
+                                                  corners2, ret)
+
             cv2.imshow('img', image)
             cv2.waitKey(0)
 
-        #cv2.destroyAllWindows()
-  
+        # cv2.destroyAllWindows()
+
         h, w = image.shape[:2]
-        
-        
+
         # Perform camera calibration by
         # passing the value of above found out 3D points (threedpoints)
         # and its corresponding pixel coordinates of the
         # detected corners (twodpoints)
         ret, matrix, distortion, r_vecs, t_vecs = cv2.calibrateCamera(
             threedpoints, twodpoints, grayColor.shape[::-1], None, None)
-        
-        
+
         # Displaying required output
         print(" Camera matrix:")
         print(matrix)
-        
+
         print("\n Distortion coefficient:")
         print(distortion)
 
-
         h,  w = image.shape[:2]
-        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(matrix, distortion, (w,h), 1, (w,h))
+        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(
+            matrix, distortion, (w, h), 1, (w, h))
 
         # # undistort
         # dst = cv2.undistort(image, matrix, distortion, None, newcameramtx)
@@ -141,9 +145,9 @@ class ImageProcessor():
         # x, y, w, h = roi
         # dst = dst[y:y+h, x:x+w]
 
-
         # undistort
-        mapx, mapy = cv2.initUndistortRectifyMap(matrix, distortion, None, newcameramtx, (w,h), 5)
+        mapx, mapy = cv2.initUndistortRectifyMap(
+            matrix, distortion, None, newcameramtx, (w, h), 5)
         dst = cv2.remap(image, mapx, mapy, cv2.INTER_LINEAR)
         # crop the image
         x, y, w, h = roi
@@ -153,8 +157,8 @@ class ImageProcessor():
         cv2.waitKey(0)
 
     def aruco_calibration(self, image):
-        #image = image.copy()
-        self.image_center =[(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0] 
+        # image = image.copy()
+        self.image_center = [(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0]
 
         markers = self.__detectArucoMarkers(image)
         if type(markers) is not type(None):
@@ -166,16 +170,16 @@ class ImageProcessor():
     def warp(self, image):
         image = image.copy()
         rotation_matrix = self.rotation_matrix.copy()
-        self.image_center =[(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0] 
+        self.image_center = [(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0]
         if type(self.rotation_matrix) is type(None):
             cv2.namedWindow('h', flags=cv2.WINDOW_AUTOSIZE)
             cv2.imshow('h', image)
             print('Empty rotmat')
             return
         cos_rm = np.abs(rotation_matrix[0][0])
-        sin_rm = np.abs(rotation_matrix[0][1])    
+        sin_rm = np.abs(rotation_matrix[0][1])
         new_height = int((image.shape[1] * sin_rm) + (image.shape[0] * cos_rm))
-        new_width = int((image.shape[1] * cos_rm) +  (image.shape[0] * sin_rm))
+        new_width = int((image.shape[1] * cos_rm) + (image.shape[0] * sin_rm))
         rotation_matrix[0][2] += (new_width/2) - self.image_center[0]
         rotation_matrix[1][2] += (new_height/2) - self.image_center[1]
         warped_image = cv2.warpAffine(
@@ -184,13 +188,13 @@ class ImageProcessor():
         cv2.namedWindow('h', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('h', warped_image)
 
-        
         markers = self.__detectArucoMarkers(warped_image)
         warped_image = warped_image[markers[1].topRight[1]:-1, markers[1].topRight[0]:-1]
         cv2.namedWindow('g', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('g', warped_image)
         return warped_image
         pass
+
 
 ##########################
 calib_list = []
@@ -216,12 +220,12 @@ if __name__ == '__main__':
         if key == ord('c'):
             calib_list.append(frame.copy())
             print(len(calib_list))
-            #ip.chessboard_calibration(frame)
+            # ip.chessboard_calibration(frame)
         if key == ord('b'):
             calib_list.clear()
         if key == ord('v'):
             ip.chessboard_calibration(calib_list)
-        # if cv2.waitKey(1) & 0xFF == ord('q'):  
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     ip.aruco_calibration(frame)
         #     ip.warp(frame)
         #     ip.save_settings()

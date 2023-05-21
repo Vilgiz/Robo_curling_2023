@@ -6,6 +6,7 @@ import sys
 from Camera import Camera
 from Comp_vision import Vision, COLOR_RED, COLOR_TEST, COLOR_YELL
 from ImageProcessor import ImageProcessor
+from Game_processor import Brain
 
 import settings as glob_const
 
@@ -16,6 +17,8 @@ RED_COLOR = COLOR_RED()
 Vis_RED = Vision(RED_COLOR)
 
 ipi = ImageProcessor()
+
+brain = Brain()
 
 calib_list = []
 
@@ -37,10 +40,17 @@ while True:
     if key == ord('b'):
         calib_list.clear()
 
-# Vis_RED.Find_contors(frame, RED_COLOR.lower, RED_COLOR.upper)
-# Vis_RED.Find_Rocks(frame)
 while True:
-    print('tsssssssss')
-    warped_image = ipi.warp(frame)
-    cv2.imshow('warped_image', warped_image)
+
     cv2.waitKey(1)
+    key = cv2.waitKey(1)
+    if key == ord('q'):
+        warped_image = ipi.warp(frame)
+        Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
+        Vis_RED.Find_Rocks(warped_image)
+    if key == ord('w'):
+        brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
+        res = brain.solve()
+        print(res)
+        brain.draw_plt()
+    # if key == ord('c'):
