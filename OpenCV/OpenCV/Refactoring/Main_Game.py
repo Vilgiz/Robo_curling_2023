@@ -29,7 +29,7 @@ while True:
     key = cv2.waitKey(1)
     if key == ord('q'):
         ipi.aruco_calibration(frame)
-        frame = ipi.warp(frame)
+        #frame = ipi.warp(frame)
         ipi.save_settings()
         break
     if key == ord('w'):
@@ -41,14 +41,34 @@ while True:
         calib_list.clear()
 
 while True:
-
-    cv2.waitKey(1)
+    frame = Cap.get_image()
+    cv2.imshow('frame', frame)
     key = cv2.waitKey(1)
-    if key == ord('q'):
+    if key == ord('u'):
         warped_image = ipi.warp(frame)
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
-    if key == ord('w'):
+        #################################################! КРИНЖ !
+        """ data_RED = []
+        for i in range (len(Vis_RED.RED_ROCKS)):
+                for point in Vis_RED.RED_ROCKS[i]:
+                    x_p = point[1]
+                    y_p = point[0]
+                    data_RED.append(x_p, y_p)
+
+        data_YELL = []
+        for i in range (len(Vis_RED.YELL_ROCKS)):
+                for point in Vis_RED.YELL_ROCKS[i]:
+                    x_p = point[1]
+                    y_p = point[0]
+                    data_YELL.append(x_p, y_p)
+ """
+        #################################################! КРИНЖ !
+        brain = Brain() 
+        print("RED") 
+        print(Vis_RED.RED_ROCKS)  
+        print("YELL")  
+        print(Vis_RED.YELL_ROCKS)
         brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
         res = brain.solve()
         print(res)

@@ -142,9 +142,9 @@ class Vision():
             pixel_color = self.hsv[y, x]
             tmp_array = pixel_color.astype(np.int64)
 
-            if np.all(tmp_array > config.red_lower) and np.all(tmp_array > config.red_upper):
+            if np.all(tmp_array > config.red_lower) and np.all(tmp_array < config.red_upper):
                 self.RED_ROCKS.append(j)
-            elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array > config.yell_upper):
+            elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
                 self.YELL_ROCKS.append(j)
 
 
@@ -160,6 +160,7 @@ if __name__ == '__main__':
 
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
+
         brain = Brain() 
         print("RED") 
         print(Vis_RED.RED_ROCKS)  
