@@ -140,7 +140,7 @@ class Brain():
                 surround = self.__near_field_check(self.destroy_rad, i)
                 coef = surround[0] - surround[1]
                 solution_matrix.append(
-                    [10 + coef, 'destroy', [data[i][1], data[i][2]]])
+                    [10 + coef, 2, [data[i][1], data[i][2]]])
             elif (data[i][0] == 1) and (data[i][3] != 0):
                 # print(self.embedded_sectors)
                 if self.embedded_sectors[data[i][3]-1][data[i][4]] == 1:
@@ -148,10 +148,10 @@ class Brain():
                     if surround[1] > 1:
                         coef = surround[0] - surround[1]
                         solution_matrix.append(
-                            [self.fast_priority[data[i][3]-1][data[i][4]] + coef, 'destroy', [data[i][1], data[i][2]]])
+                            [self.fast_priority[data[i][3]-1][data[i][4]] + coef, 2, [data[i][1], data[i][2]]])
                     else:
                         solution_matrix.append(
-                            [self.fast_priority[data[i][3]-1][data[i][4]], 'fast', [data[i][1], data[i][2]]])
+                            [self.fast_priority[data[i][3]-1][data[i][4]], 1, [data[i][1], data[i][2]]])
             if (data[i][0] != 0) and (data[i][3] == 1):
                 free_sectors[0][data[i][4]] = 0
             if (data[i][0] != 0) and (data[i][3] == 2):
@@ -170,7 +170,7 @@ class Brain():
             for j in range(len(normal_priority[0])):
                 if (normal_priority[i][j] != 0):
                     solution_matrix.append(
-                        [normal_priority[i][j], 'normal', self.Field.centers[i][j]])
+                        [normal_priority[i][j], 0, self.Field.centers[i][j]])
         solution_matrix = sorted(
             solution_matrix, key=lambda x: x[0], reverse=True)
 
@@ -192,8 +192,8 @@ class Brain():
                 for point in self.data:
                     point_x = point[1]
                     point_y = point[2]
-                    if ((point_y < 80 + y2) and (variant[1] == 'normal') or
-                            (point_y < -55 + y2) and (variant[1] != 'normal')) and ([point_x, point_y] != variant[2]):
+                    if ((point_y < 80 + y2) and (variant[1] == 0) or
+                            (point_y < -55 + y2) and (variant[1] != 0)) and ([point_x, point_y] != variant[2]):
                         distance_to_line = abs(
                             a * point_x + b * point_y + c) / math.sqrt(a ** 2 + b ** 2)
 
@@ -242,9 +242,9 @@ class Brain():
         ax.scatter(x, y, c='black', s=20, alpha=1)
         ax.scatter(service_p[0], service_p[1], c='none', s=20, alpha=1)
 
-        if self.result[2] == ['destroy']:
+        if self.result[2] == [2]:
             color = 'red'
-        elif (self.result[2] == ['fast']):
+        elif self.result[2] == [1]:
             color = 'yellow'
         else:
             color = 'green'
