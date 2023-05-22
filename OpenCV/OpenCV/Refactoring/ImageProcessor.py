@@ -4,6 +4,7 @@ import numpy as np
 import os
 import json
 from Camera import Camera
+import settings as config
 
 
 class Marker():
@@ -167,6 +168,11 @@ class ImageProcessor():
                 marker = markers[marker]
                 cv2.circle(image, marker.topRight, 4, (0, 0, 255), -1)
 
+            distance = math.sqrt((markers[1].center[0] - markers[3].center[0])**2 +
+                                 (markers[1].center[1] - markers[3].center[1])**2)
+        self.scale = config.millimetrs/distance
+
+
     def warp(self, image):
         image = image.copy()
         rotation_matrix = self.rotation_matrix.copy()
@@ -189,7 +195,7 @@ class ImageProcessor():
         cv2.imshow('h', warped_image)
 
         markers = self.__detectArucoMarkers(warped_image)
-        warped_image = warped_image[markers[1].topRight[1]:-1, markers[1].topRight[0]:-1]
+        warped_image = warped_image[markers[1].topRight[1]                                    :-1, markers[1].topRight[0]:-1]
         cv2.namedWindow('g', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('g', warped_image)
         return warped_image

@@ -3,6 +3,7 @@ import math
 import numpy as np
 import sys
 
+from Robot import Robot
 from Camera import Camera
 from Comp_vision import Vision, COLOR_RED, COLOR_TEST, COLOR_YELL
 from ImageProcessor import ImageProcessor
@@ -11,6 +12,9 @@ from Game_processor import Brain
 import settings as glob_const
 
 Cap = Camera()
+
+robot = Robot(timeout=10, print_debug=True)
+robot.start()
 
 RED_COLOR = COLOR_RED()
 
@@ -49,28 +53,36 @@ while True:
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
         #################################################! КРИНЖ !
-        """ data_RED = []
-        for i in range (len(Vis_RED.RED_ROCKS)):
-                for point in Vis_RED.RED_ROCKS[i]:
-                    x_p = point[1]
-                    y_p = point[0]
-                    data_RED.append(x_p, y_p)
+        data_RED = []
+        for point in Vis_RED.RED_ROCKS:
+            x_p = point[1]
+            y_p = point[0]
+            x_p *= ipi.scale
+            y_p *= ipi.scale
+            data_RED.append([x_p+15, y_p+15])
 
         data_YELL = []
-        for i in range (len(Vis_RED.YELL_ROCKS)):
-                for point in Vis_RED.YELL_ROCKS[i]:
-                    x_p = point[1]
-                    y_p = point[0]
-                    data_YELL.append(x_p, y_p)
- """
+        for point in Vis_RED.YELL_ROCKS:
+            x_p = point[1]
+            y_p = point[0]
+            x_p *= ipi.scale
+            y_p *= ipi.scale
+            data_YELL.append([x_p+15, y_p+15])
+
+        Vis_RED.RED_ROCKS = data_RED
+        Vis_RED.YELL_ROCKS = data_YELL
         #################################################! КРИНЖ !
         brain = Brain() 
         print("RED") 
         print(Vis_RED.RED_ROCKS)  
         print("YELL")  
         print(Vis_RED.YELL_ROCKS)
+
         brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
         res = brain.solve()
+
+        robot.send_step(res)
+
         print(res)
         brain.draw_plt()
     # if key == ord('c'):
