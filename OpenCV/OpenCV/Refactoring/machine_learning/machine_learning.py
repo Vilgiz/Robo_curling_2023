@@ -8,7 +8,7 @@ import os
 
 class Detecter():
     def __init__(self, new = False):
-        self.poly = PolynomialFeatures(degree=2)
+        self.poly = PolynomialFeatures(degree=5)
         self.dir = os.path.dirname(__file__)
         if new:
             self.model = LogisticRegression(random_state=0, multi_class='ovr',max_iter = 5000)
@@ -124,11 +124,11 @@ class Detecter():
 if __name__ == '__main__':
     #test = Detecter(new = True)
     test = Detecter()
-    path = os.path.join(test.dir,'datasets','train.mp4')
+    path = os.path.join(test.dir,'datasets','3_Pro.mp4')
     print (path)
     #test.force_training(path)
-    #test.force_training(path, retrain = True)
-    #test.save_configs()
+    test.force_training(path, retrain = True)
+    test.save_configs()
     data = np.array([1,190,210]).reshape(1, -1)
     res = test.designate(data)
     print (res)
