@@ -4,10 +4,9 @@ import numpy as np
 from Camera import Camera
 from Game_processor import Brain
 import settings as config
-
+from machine_learning.machine_learning import Detecter
 # !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
 # !!!  и было бы мега классно в нем не так часто писать слово self. ---- хз, как это сделать
-
 
 class COLOR_TEST():
     def __init__(self) -> None:
@@ -41,6 +40,8 @@ class Vision():
         self.param2 = 0.1  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
+        self.LR = Detecter()
+        self.CV_color = True
 
     def Find_contors(self, frame, lower, upper):
         self.count += 1
@@ -102,10 +103,12 @@ class Vision():
     def __show_circle(self, frame):
         for self.obj_id, pt in self.track_rocks.items():
             self.center_cv = pt
-            cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
-            cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
-            cv2.putText(frame, str(self.obj_id),
-                        (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2)
+            res = self.LR.designate(self.hsv[pt[1],pt[0]].reshape(1, -1))
+            if res != -1:
+                cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
+                cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
+                cv2.putText(frame, str(res),
+                            (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2)
 
     def __trans_coord(self):
         self.track_rocks_temp = tuple(self.track_rocks.items())
@@ -140,28 +143,44 @@ class Vision():
         for j in self.track_ROCKS:
             x, y = j
             pixel_color = self.hsv[y, x]
-            tmp_array = pixel_color.astype(np.int64)
 
-            if np.all(tmp_array > config.red_lower) and np.all(tmp_array < config.red_upper):
-                self.RED_ROCKS.append(j)
-            elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
-                self.YELL_ROCKS.append(j)
+            if self.CV_color:
+                tmp_array = pixel_color.astype(np.int64)
+                if np.all(tmp_array > config.red_lower) and np.all(tmp_array < config.red_upper):
+                    self.RED_ROCKS.append(j)
+                elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
+                    self.YELL_ROCKS.append(j)
+            else:
+                res = self.LR.designate(pixel_color.reshape(1, -1))
+                if res == 1:
+                    self.RED_ROCKS.append(j)
+                elif res == 0:
+                    self.YELL_ROCKS.append(j)
+        
+                
 
 
 if __name__ == '__main__':
-    camera = Camera()
-    RED_COLOR = COLOR_RED()
+    
+    import os
+    path = os.path.join(os.path.dirname(__file__),'machine_learning','datasets','1_Pro.mp4')
+    Cap = cv2.VideoCapture(path)
 
+    #camera = Camera()
+    RED_COLOR = COLOR_RED()
     Vis_RED = Vision(RED_COLOR)
 
     while True:
-        warped_image = camera.get_image()
+        _,warped_image = Cap.read()
+        cv2.imshow('Video', warped_image)
         cv2.waitKey(1)
 
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
 
         brain = Brain()
+        temp1 = Vis_RED.RED_ROCKS
+        temp2 = Vis_RED.YELL_ROCKS
         print("RED")
         print(Vis_RED.RED_ROCKS)
         print("YELL")
@@ -171,3 +190,21 @@ if __name__ == '__main__':
         res = brain.solve()
         print(res)
         brain.draw_plt() """
+
+    '''
+
+    RED_COLOR = COLOR_RED()
+    Vis_RED = Vision(RED_COLOR)
+    import os
+    path = os.path.join(os.path.dirname(__file__),'machine_learning','datasets','1_Pro.mp4')
+    Cap = cv2.VideoCapture(path)
+    _, frame = Cap.read()
+    while _:
+        _, frame = Cap.read()
+        cv2.imshow('Video', frame)
+        Vis_RED.Find_contors(frame, RED_COLOR.lower, RED_COLOR.upper)
+        Vis_RED.Find_Rocks(frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    '''
