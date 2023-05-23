@@ -168,6 +168,7 @@ class ImageProcessor():
                 marker = markers[marker]
                 cv2.circle(image, marker.topRight, 4, (0, 0, 255), -1)
 
+
             distance = math.sqrt((markers[1].center[0] - markers[3].center[0])**2 +
                                  (markers[1].center[1] - markers[3].center[1])**2)
         self.scale = config.millimetrs/distance
@@ -195,13 +196,30 @@ class ImageProcessor():
         cv2.imshow('h', warped_image)
 
         markers = self.__detectArucoMarkers(warped_image)
-        warped_image = warped_image[markers[1].topRight[1]                                    :-1, markers[1].topRight[0]:-1]
+        warped_image = warped_image[markers[1].topRight[1]:-1, markers[1].topRight[0]:-1]
         cv2.namedWindow('g', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('g', warped_image)
         return warped_image
-        pass
 
-
+    def warp_2(self, image):
+        image = image.copy()
+        rotation_matrix = self.rotation_matrix.copy()
+        self.image_center = [(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0]
+        if type(self.rotation_matrix) is type(None):
+            cv2.namedWindow('h', flags=cv2.WINDOW_AUTOSIZE)
+            cv2.imshow('h', image)
+            print('Empty rotmat')
+            return
+        cos_rm = np.abs(rotation_matrix[0][0])
+        sin_rm = np.abs(rotation_matrix[0][1])
+        new_height = int((image.shape[1] * sin_rm) + (image.shape[0] * cos_rm))
+        new_width = int((image.shape[1] * cos_rm) + (image.shape[0] * sin_rm))
+        rotation_matrix[0][2] += (new_width/2) - self.image_center[0]
+        rotation_matrix[1][2] += (new_height/2) - self.image_center[1]
+        warped_image = cv2.warpAffine(
+            image, rotation_matrix, (new_width, new_height))
+        return warped_image
+    
 ##########################
 calib_list = []
 #########################

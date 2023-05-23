@@ -35,7 +35,6 @@ while True:
         ipi.aruco_calibration(frame)
         #frame = ipi.warp(frame)
         ipi.save_settings()
-        break
     if key == ord('w'):
         ipi.warp(frame)
     if key == ord('c'):
@@ -43,13 +42,8 @@ while True:
         print(len(calib_list))
     if key == ord('b'):
         calib_list.clear()
-
-while True:
-    frame = Cap.get_image()
-    cv2.imshow('frame', frame)
-    key = cv2.waitKey(1)
     if key == ord('u'):
-        warped_image = ipi.warp(frame)
+        warped_image = ipi.warp_2(frame)
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
         #################################################! КРИНЖ !

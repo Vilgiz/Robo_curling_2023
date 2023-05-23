@@ -38,7 +38,7 @@ class Vision():
         self.upper = COLOR.upper
         self.count = 0
         self.param1 = 1
-        self.param2 = 0.42
+        self.param2 = 0.1  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
 
@@ -151,23 +151,23 @@ class Vision():
 if __name__ == '__main__':
     camera = Camera()
     RED_COLOR = COLOR_RED()
- 
+
     Vis_RED = Vision(RED_COLOR)
 
     while True:
         warped_image = camera.get_image()
-        cv2.waitKey(0)
+        cv2.waitKey(1)
 
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
 
-        brain = Brain() 
-        print("RED") 
-        print(Vis_RED.RED_ROCKS)  
-        print("YELL")  
+        brain = Brain()
+        print("RED")
+        print(Vis_RED.RED_ROCKS)
+        print("YELL")
         print(Vis_RED.YELL_ROCKS)
 
-        brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
+        """ brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
         res = brain.solve()
         print(res)
-        brain.draw_plt()
+        brain.draw_plt() """
