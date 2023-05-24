@@ -5,6 +5,7 @@ from Camera import Camera
 from Game_processor import Brain
 import settings as config
 from machine_learning.machine_learning import Detecter
+
 # !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
 # !!!  и было бы мега классно в нем не так часто писать слово self. ---- хз, как это сделать
 

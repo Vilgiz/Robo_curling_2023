@@ -33,7 +33,7 @@ while True:
     key = cv2.waitKey(1)
     if key == ord('q'):
         ipi.aruco_calibration(frame)
-        #frame = ipi.warp(frame)
+        frame = ipi.warp(frame, calibration = True)
         ipi.save_settings()
     if key == ord('w'):
         ipi.warp(frame)
@@ -48,19 +48,25 @@ while True:
         Vis_RED.Find_Rocks(warped_image)
         #################################################! КРИНЖ !
         data_RED = []
+        coef_x = 0.88607
+        coef_y = 1.147028
         for point in Vis_RED.RED_ROCKS:
             x_p = point[1]
             y_p = point[0]
-            x_p *= ipi.scale
-            y_p *= ipi.scale
+            #x_p *= ipi.scale
+            #y_p *= ipi.scale
+            x_p *= coef_x
+            y_p *= coef_y
             data_RED.append([x_p+15, y_p+15])
 
         data_YELL = []
         for point in Vis_RED.YELL_ROCKS:
             x_p = point[1]
             y_p = point[0]
-            x_p *= ipi.scale
-            y_p *= ipi.scale
+            #x_p *= ipi.scale
+            #y_p *= ipi.scale
+            x_p *= coef_x
+            y_p *= coef_y
             data_YELL.append([x_p+15, y_p+15])
 
         Vis_RED.RED_ROCKS = data_RED
@@ -77,6 +83,6 @@ while True:
 
         robot.send_step(res)
 
-        print(res)
+        print('Master: ', res)
         brain.draw_plt()
     # if key == ord('c'):

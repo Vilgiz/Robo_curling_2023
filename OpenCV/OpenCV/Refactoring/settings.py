@@ -1,5 +1,5 @@
 ﻿# Параметры стола
-center = (400, 1100)
+center = (350, 1100)
 radius = [390, 260, 150, 50]
 num_sectors = 22
 millimetrs = 300

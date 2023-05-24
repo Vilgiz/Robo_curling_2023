@@ -30,6 +30,8 @@ class ImageProcessor():
         with open('processor.json', 'r') as file:
             config = json.load(file)
         self.rotation_angle = config['rotation_angle']
+        self.XOY = config['aruco_XOY']
+        self.scale = config['scale']
         try:
             self.rotation_matrix = np.array(config['rotation_matrix'])
         except Exception:
@@ -39,21 +41,28 @@ class ImageProcessor():
         config = {}
         config['rotation_angle'] = self.rotation_angle
         config['rotation_matrix'] = self.rotation_matrix.tolist()
+        config['aruco_XOY'] = self.XOY
+        config['scale'] = self.scale
 
         with open('processor.json', 'w') as f:
             json.dump(config, f)
 
     def __detectArucoMarkers(self, image):
-        markers = {}
-        arucoDictionary = cv2.aruco.getPredefinedDictionary(
-            cv2.aruco.DICT_4X4_50)
-        arucoParameters = cv2.aruco.DetectorParameters()
-        (corners, ids, rejected) = cv2.aruco.detectMarkers(
-            image, arucoDictionary, parameters=arucoParameters)
+        value = 0
+        count = 0
+        while value != 3:
+            count +=1
+            markers = {}
+            arucoDictionary = cv2.aruco.getPredefinedDictionary(
+                cv2.aruco.DICT_4X4_50)
+            arucoParameters = cv2.aruco.DetectorParameters()
+            (corners, ids, rejected) = cv2.aruco.detectMarkers(
+                image, arucoDictionary, parameters=arucoParameters)
+            value = len(corners) 
 
-        if len(corners) != 3:
-            print('[ERROR] Could not find all three markers')
-            return None
+            if count > 10:
+                print('[ERROR] Could not find all three markers')
+                return None
 
         ids = ids.flatten()
         for (markerCorner, markerID) in zip(corners, ids):
@@ -172,9 +181,10 @@ class ImageProcessor():
             distance = math.sqrt((markers[1].center[0] - markers[3].center[0])**2 +
                                  (markers[1].center[1] - markers[3].center[1])**2)
         self.scale = config.millimetrs/distance
+        self.warp(image, calibration = True)
 
 
-    def warp(self, image):
+    def warp(self, image, calibration = False):
         image = image.copy()
         rotation_matrix = self.rotation_matrix.copy()
         self.image_center = [(image.shape[1]-1)/2.0, (image.shape[0]-1)/2.0]
@@ -195,8 +205,14 @@ class ImageProcessor():
         cv2.namedWindow('h', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('h', warped_image)
 
-        markers = self.__detectArucoMarkers(warped_image)
-        warped_image = warped_image[markers[1].topRight[1]:-1, markers[1].topRight[0]:-1]
+        if calibration:
+            markers = self.__detectArucoMarkers(warped_image)
+            while markers == None:
+                markers = self.__detectArucoMarkers(warped_image)
+            
+            self.XOY =[markers[1].topRight[1], markers[1].topRight[0]]
+        else:
+            warped_image = warped_image[self.XOY[0]:-1,self.XOY[1]:-1]
         cv2.namedWindow('g', flags=cv2.WINDOW_AUTOSIZE)
         cv2.imshow('g', warped_image)
         return warped_image
