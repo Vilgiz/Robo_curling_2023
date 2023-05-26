@@ -1,5 +1,5 @@
 ﻿# Параметры стола
-center = (350, 1100)
+center = (470, 1260)
 radius = [390, 260, 150, 50]
 num_sectors = 22
 millimetrs = 300
@@ -18,6 +18,7 @@ fast_priority = [[2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2,
 
 variability = 2
 hard_mode = True
+easy_mode = False
 destroy_rad = 150
 
 # Возможность выключить некотоыре секторы из расчета (1-on, 0-off)
@@ -27,23 +28,23 @@ embedded_sectors = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 # Настройки ограничений бросков
-min_x = 150
-max_x = 650
+min_x = 251
+max_x = 749
 step = 25
-start_y = 20
+start_y = 100
 safe_distance = 120
-start_safe_rad = 80
+start_safe_rad = 85
 error_limit = 15
 
 
 # Параметры камней
 # Задаем диапазоны цветов для красного и синего цветов
 red_lower = [0, 80, 80]
-red_upper = [10, 255, 255]
+red_upper = [15, 255, 255]
 blue_lower = (20, 70, 200)  # (90, 70, 20)
 blue_upper = (25, 180, 255)  # (120, 220, 100)
-yell_lower = [20, 70, 190]  # (90, 70, 20)
-yell_upper = [28, 180, 255]  # (120, 220, 100)
+yell_lower = [20, 100, 200]  # (90, 70, 20)
+yell_upper = [30, 255, 255]  # (120, 220, 100)
 
 # Задаем минимальный и максимальный радиусы
 min_radius = 30

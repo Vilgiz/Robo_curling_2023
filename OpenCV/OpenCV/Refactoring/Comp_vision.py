@@ -4,7 +4,7 @@ import numpy as np
 from Camera import Camera
 from Game_processor import Brain
 import settings as config
-from machine_learning.machine_learning import Detecter
+#from machine_learning.machine_learning import Detecter
 
 # !!!  Класс Vision представляет собой блядский швейцарский нож, который храт в себе туеву хучу всего
 # !!!  и было бы мега классно в нем не так часто писать слово self. ---- хз, как это сделать
@@ -38,10 +38,10 @@ class Vision():
         self.upper = COLOR.upper
         self.count = 0
         self.param1 = 1
-        self.param2 = 0.1  # 0.43
+        self.param2 = 0.298  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
-        self.LR = Detecter()
+        #self.LR = Detecter()
         self.CV_color = True
 
     def Find_contors(self, frame, lower, upper):
@@ -52,7 +52,7 @@ class Vision():
         self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2,
-                                   minRadius=50, maxRadius=60)
+                                   minRadius=40, maxRadius=50)
         if circles is not None:
             circles = np.uint16(np.around(circles))
             red_circles = []
@@ -104,12 +104,13 @@ class Vision():
     def __show_circle(self, frame):
         for self.obj_id, pt in self.track_rocks.items():
             self.center_cv = pt
-            res = self.LR.designate(self.hsv[pt[1],pt[0]].reshape(1, -1))
-            if res != -1:
-                cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
-                cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
-                cv2.putText(frame, str(res),
-                            (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2)
+            #res = self.LR.designate(self.hsv[pt[1],pt[0]].reshape(1, -1))
+            #if res != -1:
+            cv2.circle(frame, self.center_cv, self.radius_cv, (0, 255, 0), 3)
+            cv2.circle(frame, self.center_cv, 3, (0, 0, 255), 3)
+            cv2.putText(frame, str(self.obj_id),
+                        (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2)
+        cv2.imshow('Video', frame)
 
     def __trans_coord(self):
         self.track_rocks_temp = tuple(self.track_rocks.items())
@@ -151,37 +152,40 @@ class Vision():
                     self.RED_ROCKS.append(j)
                 elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
                     self.YELL_ROCKS.append(j)
+            '''
             else:
                 res = self.LR.designate(pixel_color.reshape(1, -1))
                 if res == 1:
                     self.RED_ROCKS.append(j)
                 elif res == 0:
                     self.YELL_ROCKS.append(j)
-        
+        '''
                 
 
 
 if __name__ == '__main__':
     
     import os
-    path = os.path.join(os.path.dirname(__file__),'machine_learning','datasets','1_Pro.mp4')
-    Cap = cv2.VideoCapture(path)
+    #path = os.path.join(os.path.dirname(__file__),'machine_learning','datasets','1_Pro.mp4')
+    #Cap = cv2.VideoCapture(path)
 
-    #camera = Camera()
+    camera = Camera()
     RED_COLOR = COLOR_RED()
     Vis_RED = Vision(RED_COLOR)
+    #cap = cv2.VideoCapture(1)
 
     while True:
-        _,warped_image = Cap.read()
-        cv2.imshow('Video', warped_image)
+        #warped_image = camera.get_image()
+        warped_image = camera.get_image()
+        #cv2.imshow('Video', warped_image)
         cv2.waitKey(1)
 
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
 
-        brain = Brain()
-        temp1 = Vis_RED.RED_ROCKS
-        temp2 = Vis_RED.YELL_ROCKS
+        #brain = Brain()
+        #temp1 = Vis_RED.RED_ROCKS
+        #temp2 = Vis_RED.YELL_ROCKS
         print("RED")
         print(Vis_RED.RED_ROCKS)
         print("YELL")

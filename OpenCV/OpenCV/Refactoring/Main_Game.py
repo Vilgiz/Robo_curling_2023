@@ -43,20 +43,22 @@ while True:
     if key == ord('b'):
         calib_list.clear()
     if key == ord('u'):
-        warped_image = ipi.warp_2(frame)
+        warped_image = ipi.warp(frame)
         Vis_RED.Find_contors(warped_image, RED_COLOR.lower, RED_COLOR.upper)
         Vis_RED.Find_Rocks(warped_image)
         #################################################! КРИНЖ !
         data_RED = []
-        coef_x = 0.88607
-        coef_y = 1.147028
+        coef_x = 1.051454
+        coef_y = 1.115044
         for point in Vis_RED.RED_ROCKS:
             x_p = point[1]
             y_p = point[0]
             #x_p *= ipi.scale
             #y_p *= ipi.scale
-            x_p *= coef_x
-            y_p *= coef_y
+            #x_p = x_p + 20
+            #y_p = y_p + 70
+            x_p = int(x_p * coef_x)
+            y_p = int(y_p * coef_y)
             data_RED.append([x_p+15, y_p+15])
 
         data_YELL = []
@@ -65,8 +67,11 @@ while True:
             y_p = point[0]
             #x_p *= ipi.scale
             #y_p *= ipi.scale
-            x_p *= coef_x
-            y_p *= coef_y
+            #x_p = x_p + 20
+            #7y_p = y_p + 70
+            x_p = int(x_p * coef_x)
+            y_p = int(y_p * coef_y)
+
             data_YELL.append([x_p+15, y_p+15])
 
         Vis_RED.RED_ROCKS = data_RED
@@ -77,12 +82,10 @@ while True:
         print(Vis_RED.RED_ROCKS)  
         print("YELL")  
         print(Vis_RED.YELL_ROCKS)
-
-        brain.take_data(Robot=Vis_RED.YELL_ROCKS, Human=Vis_RED.RED_ROCKS)
+    if key == ord('i'):
+        brain.take_data(Robot=Vis_RED.RED_ROCKS, Human=Vis_RED.YELL_ROCKS)
         res = brain.solve()
-
-        robot.send_step(res)
-
-        print('Master: ', res)
-        brain.draw_plt()
-    # if key == ord('c'):
+        if res != None:
+            robot.send_step(res)
+            print('Master: ', res)
+            brain.draw_plt()

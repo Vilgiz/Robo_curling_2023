@@ -69,8 +69,8 @@ class Brain():
         self.start_y = config.start_y
         self.safe_distance = config.safe_distance
         self.variability = config.variability
-        self.hard_mode = False  # config.hard_mode
-        self.easy_mode = True
+        self.hard_mode = config.hard_mode
+        self.easy_mode = config.easy_mode
         self.destroy_rad = config.destroy_rad
         self.start_safe_rad = config.start_safe_rad
         self.error_limit = config.error_limit
@@ -86,8 +86,8 @@ class Brain():
         self.start_y = config.start_y
         self.safe_distance = config.safe_distance
         self.variability = config.variability
-        self.hard_mode = False  # config.hard_mode
-        self.easy_mode = True
+        self.hard_mode = config.hard_mode
+        self.easy_mode = config.easy_mode
         self.destroy_rad = config.destroy_rad
         self.start_safe_rad = config.start_safe_rad
         self.error_limit = config.error_limit
@@ -152,9 +152,9 @@ class Brain():
                     else:
                         solution_matrix.append(
                             [self.fast_priority[data[i][3]-1][data[i][4]], 1, [data[i][1], data[i][2]]])
-            if (data[i][0] != 0) and (data[i][3] == 1):
+            elif (data[i][0] != 0) and (data[i][3] == 1):
                 free_sectors[0][data[i][4]] = 0
-            if (data[i][0] != 0) and (data[i][3] == 2):
+            elif (data[i][0] != 0) and (data[i][3] == 2):
                 for j in range(5):
                     k = data[i][4] + j
                     l = data[i][4] - j
@@ -178,7 +178,7 @@ class Brain():
 
     def __path_searching(self):
         solution_matrix = self.__variants_searching()
-        # print(solution_matrix)
+        print(solution_matrix)
         path = []
         for variant in solution_matrix:
             x2, y2 = variant[2]
@@ -259,22 +259,27 @@ class Brain():
             count += 1
             variants = self.__path_searching()
             # print(variants)
-            if self.hard_mode:
-                result = variants[0][randint(0, min(len(variants[0]), 3)-1)]
-            elif self.easy_mode:
-                i = randint(0, len(variants)-1)
-                result = variants[i][randint(0, len(variants[i])-1)]
+            if len(variants) == 0:
+                print('[ERROR]: no one variant is safety')
+                return None
             else:
-                i = randint(0, min(len(variants)-1, self.variability))
-                result = variants[i][randint(0, len(variants[i])-1)]
+                if self.hard_mode:
+                    result = variants[0][0]
+                elif self.easy_mode:
+                    i = randint(0, len(variants)-1)
+                    result = variants[i][randint(0, len(variants[i])-1)]
+                else:
+                    i = randint(0, min(len(variants)-1, self.variability))
+                    result = variants[i][randint(0, len(variants[i])-1)]
 
-            if self.__safety_check(result):
-                self.result = result
-                return (result)
-                break
-            if count > self.error_limit:
-                return ('[ERROR]: no one variant is safety')
-                # следующая итерация - придумать, что делать в таких случаях
+                if self.__safety_check(result):
+                    self.result = result
+                    return (result)
+                    break
+                if count > self.error_limit:
+                    print('[ERROR]: no one variant is safety')
+                    return None
+                    # следующая итерация - придумать, что делать в таких случаях
 
     def take_data(self, Robot, Human):
         # тут для формата данных [[x,y],[x,y]...]
