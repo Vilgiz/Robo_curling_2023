@@ -179,7 +179,7 @@ class ImageProcessor():
             #cv2.waitKey(0)
         return(image, grayColor, threedpoints, twodpoints)
 
-    def perspect(self, image, calibration = False):
+    def perspective_correction(self, image, calibration = False):
         h,  w = image.shape[:2]
         if calibration:
             markers = self.__detectArucoMarkers(image)
@@ -283,9 +283,9 @@ if __name__ == '__main__':
         if key == ord('v'):
             ip.chessboard_calibration(calib_list)
         if key == ord('p'):
-            ip.perspect(frame, calibration = True)
+            ip.perspective_correction(frame, calibration = True)
         if key == ord('l'):
-            cv2.imshow('result',ip.perspect(frame))
+            cv2.imshow('result',ip.perspective_correction(frame))
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     ip.aruco_calibration(frame)
         #     ip.warp(frame)
