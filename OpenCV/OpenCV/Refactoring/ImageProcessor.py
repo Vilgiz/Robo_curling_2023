@@ -50,7 +50,7 @@ class ImageProcessor():
     def __detectArucoMarkers(self, image):
         value = 0
         count = 0
-        while value != 3:
+        while value < 3:
             count +=1
             markers = {}
             arucoDictionary = cv2.aruco.getPredefinedDictionary(
@@ -91,8 +91,56 @@ class ImageProcessor():
             self.image_center, self.rotation_angle*180/math.pi, 1.0)
 
     def chessboard_calibration(self, image_list):
-        # image = image.copy()
-        CHECKERBOARD = (5, 8)
+        ch_x = 7
+        ch_y = 7
+
+        image, grayColor, threedpoints, twodpoints = self.__chess_processor(image_list, ch_x, ch_y)
+
+
+        # cv2.destroyAllWindows()
+
+        h, w = image.shape[:2]
+        
+        # Perform camera calibration by
+        # passing the value of above found out 3D points (threedpoints)
+        # and its corresponding pixel coordinates of the
+        # detected corners (twodpoints)
+        ret, matrix, distortion, r_vecs, t_vecs = cv2.calibrateCamera(
+            threedpoints, twodpoints, grayColor.shape[::-1], None, None)
+
+        # Displaying required output
+        print(" Camera matrix:")
+        print(matrix)
+
+        print("\n Distortion coefficient:")
+        print(distortion)
+
+        h,  w = image.shape[:2]
+        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(
+            matrix, distortion, (w, h), 1, (w, h))
+
+        # # undistort
+        # dst = cv2.undistort(image, matrix, distortion, None, newcameramtx)
+        # # crop the image
+        # x, y, w, h = roi
+        # dst = dst[y:y+h, x:x+w]
+
+        # undistort
+        
+        mapx, mapy = cv2.initUndistortRectifyMap(
+            matrix, distortion, None, newcameramtx, (w, h), 5)
+        dst = cv2.remap(image, mapx, mapy, cv2.INTER_LINEAR)
+        # crop the image
+        x, y, w, h = roi
+        dst = dst[y:y+h, x:x+w]
+        
+        cv2.imshow('calibresult',dst)
+        cv2.waitKey(0)
+        
+
+    def __chess_processor(self, image_list, ch_x, ch_y):
+         # image = image.copy()
+        CHECKERBOARD = (ch_x, ch_y)
         criteria = (cv2.TERM_CRITERIA_EPS +
                     cv2.TERM_CRITERIA_MAX_ITER, 80, 0.0001)
         # Vector for 3D points
@@ -125,48 +173,28 @@ class ImageProcessor():
                 image = cv2.drawChessboardCorners(image,
                                                   CHECKERBOARD,
                                                   corners2, ret)
+            
 
-            cv2.imshow('img', image)
-            cv2.waitKey(0)
+            #cv2.imshow('img', image)
+            #cv2.waitKey(0)
+        return(image, grayColor, threedpoints, twodpoints)
 
-        # cv2.destroyAllWindows()
-
-        h, w = image.shape[:2]
-
-        # Perform camera calibration by
-        # passing the value of above found out 3D points (threedpoints)
-        # and its corresponding pixel coordinates of the
-        # detected corners (twodpoints)
-        ret, matrix, distortion, r_vecs, t_vecs = cv2.calibrateCamera(
-            threedpoints, twodpoints, grayColor.shape[::-1], None, None)
-
-        # Displaying required output
-        print(" Camera matrix:")
-        print(matrix)
-
-        print("\n Distortion coefficient:")
-        print(distortion)
-
+    def perspect(self, image, calibration = False):
         h,  w = image.shape[:2]
-        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(
-            matrix, distortion, (w, h), 1, (w, h))
+        if calibration:
+            markers = self.__detectArucoMarkers(image)
+            start_p = np.float32([markers[0].center,markers[2].center,
+                                  markers[3].center,markers[5].center])
+            dest_p = np.float32([[0,0],[92*2,0],
+                                 [0,58],[92*2,58]])
+            self.M = cv2.getPerspectiveTransform(start_p,dest_p)
+            result = cv2.warpPerspective(image, self.M,(h,w))
+            cv2.imshow('calibresult',result)
+        else:
+            result = cv2.warpPerspective(image, self.M,(h,w))
+            return(result)
+        
 
-        # # undistort
-        # dst = cv2.undistort(image, matrix, distortion, None, newcameramtx)
-        # # crop the image
-        # x, y, w, h = roi
-        # dst = dst[y:y+h, x:x+w]
-
-        # undistort
-        mapx, mapy = cv2.initUndistortRectifyMap(
-            matrix, distortion, None, newcameramtx, (w, h), 5)
-        dst = cv2.remap(image, mapx, mapy, cv2.INTER_LINEAR)
-        # crop the image
-        x, y, w, h = roi
-        dst = dst[y:y+h, x:x+w]
-
-        cv2.imshow('calibresult', dst)
-        cv2.waitKey(0)
 
     def aruco_calibration(self, image):
         # image = image.copy()
@@ -254,6 +282,10 @@ if __name__ == '__main__':
             calib_list.clear()
         if key == ord('v'):
             ip.chessboard_calibration(calib_list)
+        if key == ord('p'):
+            ip.perspect(frame, calibration = True)
+        if key == ord('l'):
+            cv2.imshow('result',ip.perspect(frame))
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     ip.aruco_calibration(frame)
         #     ip.warp(frame)
