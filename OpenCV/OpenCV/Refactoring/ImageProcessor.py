@@ -197,7 +197,7 @@ class ImageProcessor():
             cv2.imwrite('rez.png',result)
             cv2.imshow('calibresult',result)
         else:
-            result = cv2.warpPerspective(image, self.M,(h,w))
+            result = cv2.warpPerspective(image, self.M,(w,h))
             return(result)
         
 
@@ -267,11 +267,11 @@ if __name__ == '__main__':
     ip = ImageProcessor()
     import cv2
     import sys
-    #Cap = Camera()
+    Cap = Camera()
     #Cap = cv2.VideoCapture("win.mp4")
-    take_frame = cv2.imread('WIN.png')
+    #take_frame = cv2.imread('WIN.png')
     while True:
-        #take_frame = Cap.get_image()
+        take_frame = Cap.get_image()
         #_,take_frame = Cap.read()
         frame = cv2.flip(cv2.flip(take_frame,0),1)
         cv2.imshow('frame', frame)
