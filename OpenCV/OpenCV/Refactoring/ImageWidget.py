@@ -1,5 +1,6 @@
 from PyQt6 import QtWidgets, QtGui
 from cv2 import rotate
+from imutils import resize
 
 import numpy as np
 
@@ -8,13 +9,11 @@ class ImageWidget(QtWidgets.QWidget):
         super().__init__(parent)
         self.image = QtGui.QImage()
         self.rotation_type = None
-        self._red = (0, 0, 255)
-        self._width = 2
-        self._min_size = (30, 30)
 
     def image_data_slot(self, image_data):
         if self.rotation_type:
             image_data = rotate(image_data, self.rotation_type)
+        image_data = resize(image_data, width=self.size().width())
         self.image = self.get_qimage(image_data)
         if self.image.size() != self.size():
             self.setFixedSize(self.image.size())

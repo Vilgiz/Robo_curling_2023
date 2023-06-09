@@ -38,7 +38,7 @@ class Vision():
         self.upper = COLOR.upper
         self.count = 0
         self.param1 = 1
-        self.param2 = 0.298  # 0.43
+        self.param2 = 0.1  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
         #self.LR = Detecter()
@@ -94,12 +94,13 @@ class Vision():
                 self.track_id += 1
         self.rocks_prev_frame = self.rocks_curr_frame.copy()
         self.__check()
-        self.__show_circle(frame)
+        #self.__show_circle(frame)
         self.__Red_Yell_array(frame)
+        #self.__show_circle(frame)
         cv2.imshow('frame', frame)
-        """ if self.count == 1:
-            cv2.createTrackbar('param1', 'frame', 1, 1000, self.__onChange1)   
-            cv2.createTrackbar('param2', 'frame', 1, 1000, self.__onChange2)  """
+        #if self.count == 1:
+            #cv2.createTrackbar('param1', 'frame', 1, 1000, self.__onChange1)   
+            #cv2.createTrackbar('param2', 'frame', 1, 1000, self.__onChange2) 
 
     def __show_circle(self, frame):
         for self.obj_id, pt in self.track_rocks.items():
@@ -150,8 +151,11 @@ class Vision():
                 tmp_array = pixel_color.astype(np.int64)
                 if np.all(tmp_array > config.red_lower) and np.all(tmp_array < config.red_upper):
                     self.RED_ROCKS.append(j)
+                    cv2.circle(frame, j, 55, (0, 255, 0), 3)
                 elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
                     self.YELL_ROCKS.append(j)
+                    cv2.circle(frame, j, 55, (0, 255, 0), 3)
+                    
             '''
             else:
                 res = self.LR.designate(pixel_color.reshape(1, -1))
