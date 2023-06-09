@@ -124,16 +124,16 @@ class Camera:
         self.resolution = config['resolution']
 
     def __camera_init(self):
-        camera = cv2.VideoCapture(self.id, cv2.CAP_ANY)
+        camera = cv2.VideoCapture(self.id, cv2.CAP_DSHOW)
         camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-        #camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)  # выключаем автофокус
+        camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)  # выключаем автофокус
         #camera.set(cv2.CAP_PROP_FOCUS, 170)  # устанавливаем фокус на 50 см
         print('Warming up the camera')
-        for i in range(20):
+        for i in range(10):
             print('/|\\-'[i % 4]+'\r', end='')
             _, frame = camera.read()
-            cv2.waitKey(10)
+            cv2.waitKey(5)
         return camera
 
     def save_settings(self):
