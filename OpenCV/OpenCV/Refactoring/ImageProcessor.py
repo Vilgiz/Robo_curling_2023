@@ -23,7 +23,7 @@ class ImageProcessor():
 
     def __load_defaults(self):
         self.rotation_angle = 0
-        self.rotation_matrix = None
+        self.M = None
         self.save_settings()
 
     def __load_settings(self):
@@ -33,16 +33,16 @@ class ImageProcessor():
         #self.XOY = config['aruco_XOY']
         #self.scale = config['scale']
         try:
-            self.rotation_matrix = np.array(config['rotation_matrix'])
+            self.M = np.array(config['rotation_matrix'])
         except Exception:
-            self.rotation_matrix = None
+            self.M = None
 
     def save_settings(self):
         config = {}
-        config['rotation_angle'] = self.rotation_angle
-        config['rotation_matrix'] = self.rotation_matrix.tolist()
-        config['aruco_XOY'] = self.XOY
-        config['scale'] = self.scale
+        #config['rotation_angle'] = self.rotation_angle
+        config['rotation_matrix'] = self.M.tolist()
+        #config['aruco_XOY'] = self.XOY
+        #config['scale'] = self.scale
 
         with open('processor.json', 'w') as f:
             json.dump(config, f)
@@ -193,6 +193,8 @@ class ImageProcessor():
             dest_p = np.float32([[0,0],[1000,0],
                                  [1000,700],[0,700]])
             self.M = cv2.getPerspectiveTransform(start_p,dest_p)
+            # Сохраняем М
+            self.save_settings()
             result = cv2.warpPerspective(image, self.M,(w,h))
             cv2.imwrite('rez.png',result)
             cv2.imshow('calibresult',result)

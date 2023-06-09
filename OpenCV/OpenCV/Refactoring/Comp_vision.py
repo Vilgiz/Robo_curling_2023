@@ -52,7 +52,7 @@ class Vision():
         self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2,
-                                   minRadius=40, maxRadius=50)
+                                   minRadius=50, maxRadius=60)
         if circles is not None:
             circles = np.uint16(np.around(circles))
             red_circles = []
