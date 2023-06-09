@@ -69,6 +69,7 @@ class GameThread(QtCore.QObject):
         if frame is not None:
             #self.original_image_signal.emit(frame)
             warped_image = self.ipi.perspective_correction(frame)
+            warped_image = cv2.medianBlur(warped_image, 9)
             self.Vis_RED.Find_contors(warped_image, self.RED_COLOR.lower, self.RED_COLOR.upper)
             self.Vis_RED.Find_Rocks(warped_image)
             #################################################! КРИНЖ !

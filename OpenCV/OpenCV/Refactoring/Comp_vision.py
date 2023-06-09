@@ -38,7 +38,7 @@ class Vision():
         self.upper = COLOR.upper
         self.count = 0
         self.param1 = 1
-        self.param2 = 0.1  # 0.43
+        self.param2 = 0.29  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
         #self.LR = Detecter()
@@ -51,7 +51,7 @@ class Vision():
         self.hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         self.RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 40, param1=self.param1, param2=self.param2,
+        circles = cv2.HoughCircles(self.gray, cv2.HOUGH_GRADIENT_ALT, 1, 75, param1=self.param1, param2=self.param2,
                                    minRadius=50, maxRadius=60)
         if circles is not None:
             circles = np.uint16(np.around(circles))

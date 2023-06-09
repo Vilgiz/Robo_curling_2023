@@ -1,6 +1,7 @@
 ﻿
 from colorsys import hsv_to_rgb
 import cv2 as cv
+import cv2
 import numpy
 from Camera import Camera
 
@@ -9,6 +10,7 @@ Cam = Camera()
 frame = Cam.get_image()
 
 img = frame
+img = cv.medianBlur(img, 9)
 # img = cv.imread("C:\\Users\Vilgi\Desktop\sdsdw.jpg")   # Загружаем изображение
 
 
@@ -19,11 +21,12 @@ img = frame
 upper_green = (20, 255, 255) """
 
 # Определение диапазона нужного цвета в HSV
-lower_green = (170, 100, 0)
-upper_green = (230, 255, 145)
+lower_green = (140, 100, 0)
+upper_green = (255, 255, 160)
 
 
 # Преобразование изображения в цветовую модель HSV
+
 hsv = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
 # Создание маски для зеленого цвета
