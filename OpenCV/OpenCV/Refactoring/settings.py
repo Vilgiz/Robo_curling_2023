@@ -17,7 +17,7 @@ fast_priority = [[2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2,
                  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]]
 
 variability = 2
-hard_mode = True
+hard_mode = False
 easy_mode = False
 destroy_rad = 150
 

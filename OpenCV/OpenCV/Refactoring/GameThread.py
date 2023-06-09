@@ -1,4 +1,5 @@
 import random
+import cv2
 import numpy as np
 from Camera import Camera
 from PyQt6 import QtCore
@@ -22,7 +23,13 @@ class GameThread(QtCore.QObject):
 
     def get_coordinates(self):
         self.brain.take_data(Human=self.Vis_RED.RED_ROCKS, Robot=self.Vis_RED.YELL_ROCKS)
-        return self.brain.solve()
+        result = self.brain.solve()
+        self.last_start_coordinates = result[0]
+        self.last_stop_coordinates = result[1]
+        if (result[2][0] == 0): self.last_color = (0,255,0)
+        if (result[2][0] == 1): self.last_color = (0,255,255)
+        if (result[2][0] == 1): self.last_color = (0,0,255)
+        return result
 
     def __init_game_parameters(self):
         self.RED_COLOR = COLOR_RED()
@@ -30,6 +37,9 @@ class GameThread(QtCore.QObject):
         self.ipi = ImageProcessor()
         self.brain = Brain()
         self.calib_list = []
+        self.last_start_coordinates = (0, 0)
+        self.last_stop_coordinates = (0, 0)
+        self.last_color = (0, 255, 0)
         center = (470, 1250)
 
         radius_white_Circle = 30
@@ -104,7 +114,9 @@ class GameThread(QtCore.QObject):
                     for quantity in range (len(data_YELL)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
                         self.Yellow_scope.Which_field(self.Yellow_scope.iteration_of_piptics(data_YELL, quantity))
                     #print(Blue_scope.point)
-
+            start = (self.last_start_coordinates[1], self.last_start_coordinates[0])
+            stop = (self.last_stop_coordinates[1], self.last_stop_coordinates[0])
+            cv2.line(warped_image, start, stop, self.last_color, 8)
             self.processed_image_signal.emit(warped_image)
             self.score_data.emit(str([self.Yellow_scope.point, self.Red_scope.point]))
     def __del__(self):
