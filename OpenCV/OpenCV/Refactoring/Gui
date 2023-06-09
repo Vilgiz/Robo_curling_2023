@@ -1,0 +1,90 @@
+import sys
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5 import QtWidgets
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QLabel
+import untitled 
+import cv2
+import math
+import numpy as np
+from Robot import Robot
+from Camera import Camera
+from Comp_vision import Vision, COLOR_RED, COLOR_TEST, COLOR_YELL
+from ImageProcessor import ImageProcessor
+from Game_processor import Brain
+import settings as glob_const
+
+Cap = Camera()
+
+robot = Robot(timeout=10, print_debug=True)
+robot.start()
+RED_COLOR = COLOR_RED()
+Vis_RED = Vision(RED_COLOR)
+ipi = ImageProcessor()
+brain = Brain()
+calib_list = []
+
+
+class ExampleApp(QtWidgets.QMainWindow, untitled.Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+
+
+
+
+def main():
+    app = QtWidgets.QApplication(sys.argv) 
+    window = ExampleApp()  
+    window.show()
+    app.exec_()
+
+if __name__ == '__main__':  
+    main() 
+
+
+
+
+
+
+
+import sys
+import cv2
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel
+
+class VideoPlayer(QDialog):
+    def __init__(self):
+        super().__init__()
+
+        # Создаем виджет QLabel для отображения изображения
+        self.image_label = QLabel(self)
+        self.image_label.setAlignment(Qt.AlignCenter)
+
+        # Создаем таймер для обновления изображения
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(30)
+
+        # Создаем объект VideoCapture для захвата видео с веб-камеры
+        self.capture = cv2.VideoCapture(0)
+
+    def update_frame(self):
+        # Захватываем кадр с веб-камеры
+        ret, frame = self.capture.read()
+
+        # Преобразуем кадр в изображение PyQt
+        image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888).rgbSwapped()
+        pixmap = QPixmap.fromImage(image)
+
+        # Отображаем изображение на виджете QLabel
+        self.image_label.setPixmap(pixmap)
+
+    def closeEvent(self, event):
+        # Останавливаем таймер и освобождаем ресурсы VideoCapture при закрытии приложения
+        self.timer.stop()
+        self.capture.release()
+        event.accept()
+
