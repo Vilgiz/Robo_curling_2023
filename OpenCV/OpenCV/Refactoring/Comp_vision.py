@@ -145,14 +145,16 @@ class Vision():
         self.YELL_ROCKS = []
         for j in self.track_ROCKS:
             x, y = j
-            pixel_color = self.hsv[y, x]
+            pixel_color_HSV = self.hsv[y, x]
+            pixel_color_RGB = self.RGB[y, x]
 
             if self.CV_color:
-                tmp_array = pixel_color.astype(np.int64)
-                if np.all(tmp_array > config.red_lower) and np.all(tmp_array < config.red_upper):
+                tmp_array_HSV = pixel_color_HSV.astype(np.int64)
+                tmp_array_RGB = pixel_color_RGB.astype(np.int64)
+                if np.all(tmp_array_RGB > config.red_lower_RGB) and np.all(tmp_array_RGB < config.red_upper_RGB):
                     self.RED_ROCKS.append(j)
                     cv2.circle(frame, j, 55, (0, 255, 0), 3)
-                elif np.all(tmp_array > config.yell_lower) and np.all(tmp_array < config.yell_upper):
+                elif np.all(tmp_array_HSV > config.yell_lower) and np.all(tmp_array_HSV < config.yell_upper):
                     self.YELL_ROCKS.append(j)
                     cv2.circle(frame, j, 55, (0, 255, 0), 3)
                     
