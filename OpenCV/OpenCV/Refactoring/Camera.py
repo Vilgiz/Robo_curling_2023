@@ -128,7 +128,7 @@ class Camera:
         camera.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
         camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)  # выключаем автофокус
-        camera.set(cv2.CAP_PROP_FOCUS, 200)  # устанавливаем фокус на 50 см
+        camera.set(cv2.CAP_PROP_FOCUS, 180)  # устанавливаем фокус на 50 см
         print('Warming up the camera')
         for i in range(20):
             print('/|\\-'[i % 4]+'\r', end='')

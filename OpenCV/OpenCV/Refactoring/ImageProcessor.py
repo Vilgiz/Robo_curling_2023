@@ -29,9 +29,9 @@ class ImageProcessor():
     def __load_settings(self):
         with open('processor.json', 'r') as file:
             config = json.load(file)
-        self.rotation_angle = config['rotation_angle']
-        self.XOY = config['aruco_XOY']
-        self.scale = config['scale']
+        #self.rotation_angle = config['rotation_angle']
+        #self.XOY = config['aruco_XOY']
+        #self.scale = config['scale']
         try:
             self.rotation_matrix = np.array(config['rotation_matrix'])
         except Exception:
@@ -61,7 +61,7 @@ class ImageProcessor():
             value = len(corners) 
 
             if count > 10:
-                print('[ERROR] Could not find all three markers')
+                print('[ERROR] Could not find all markers')
                 return None
 
         ids = ids.flatten()
@@ -183,12 +183,18 @@ class ImageProcessor():
         h,  w = image.shape[:2]
         if calibration:
             markers = self.__detectArucoMarkers(image)
-            start_p = np.float32([markers[0].center,markers[2].center,
-                                  markers[3].center,markers[5].center])
-            dest_p = np.float32([[0,0],[92*2,0],
-                                 [0,58],[92*2,58]])
+            cv2.circle(image, markers[1].bottomLeft, 3, (0, 0, 255), 3)
+            cv2.circle(image, markers[2].bottomLeft, 3, (0, 255, 0), 3)
+            cv2.circle(image, markers[3].bottomLeft, 3, (255, 0, 0), 3)
+            cv2.circle(image, markers[0].bottomLeft, 3, (255, 0, 255), 3)
+            cv2.imshow('detectresult',image)
+            start_p = np.float32([markers[1].bottomLeft,markers[2].bottomLeft,
+                                  markers[3].bottomLeft,markers[0].bottomLeft])
+            dest_p = np.float32([[0,0],[1000,0],
+                                 [1000,700],[0,700]])
             self.M = cv2.getPerspectiveTransform(start_p,dest_p)
-            result = cv2.warpPerspective(image, self.M,(h,w))
+            result = cv2.warpPerspective(image, self.M,(w,h))
+            cv2.imwrite('rez.png',result)
             cv2.imshow('calibresult',result)
         else:
             result = cv2.warpPerspective(image, self.M,(h,w))
@@ -261,10 +267,13 @@ if __name__ == '__main__':
     ip = ImageProcessor()
     import cv2
     import sys
-    Cap = Camera()
-
+    #Cap = Camera()
+    #Cap = cv2.VideoCapture("win.mp4")
+    take_frame = cv2.imread('WIN.png')
     while True:
-        frame = Cap.get_image()
+        #take_frame = Cap.get_image()
+        #_,take_frame = Cap.read()
+        frame = cv2.flip(cv2.flip(take_frame,0),1)
         cv2.imshow('frame', frame)
 
         key = cv2.waitKey(1)
