@@ -54,12 +54,15 @@ red_upper = [15, 255, 255]
 blue_lower = (20, 70, 200)  # (90, 70, 20)
 blue_upper = (25, 180, 255)  # (120, 220, 100)
 yell_lower = [15, 60, 100]  # (90, 70, 20)
-yell_upper = [185, 255, 255]  # (120, 220, 100)
+yell_upper = [100, 255, 255]  # (120, 220, 100)
 
-red_lower_RGB = [70, 0, 0]
+red_lower_RGB = [100, 0, 0]
 red_upper_RGB = [255, 100, 100]  
 yell_lower_RGB = [140, 100, 0]  
 yell_upper_RGB = [255, 255, 160]  
+
+
+#
 
 # lower_green = (140, 100, 0)
 # upper_green = (255, 255, 160)

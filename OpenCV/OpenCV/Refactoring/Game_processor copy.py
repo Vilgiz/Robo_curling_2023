@@ -108,9 +108,6 @@ class Brain():
                 sector_type = 3
             else:
                 sector_type = 0
-            #Камни в мешающей зоне
-            # if (670> data[i][1] >270) and (850> data[i][2] >550):
-            #     sector_type = 10
 
             sector_number = int(angle // self.Field.sector_size)
             data[i].append(sector_type)
@@ -131,7 +128,7 @@ class Brain():
                         count_human += 1
                     elif self.data[i][0] == 2:
                         count_robot += 1
-
+        # print (count_robot, count_human) 
         return [count_human, count_robot]
 
     def __variants_searching(self):
@@ -141,14 +138,14 @@ class Brain():
         for i in range(len(data)):
             if (data[i][0] == 1) and (data[i][3] == 3):
                 surround = self.__near_field_check(self.destroy_rad, i)
-                coef = surround[0] - surround[1]
+                coef = surround[0] - surround[1]*3
                 solution_matrix.append(
                     [10 + coef, 2, [data[i][1], data[i][2]]])
             elif (data[i][0] == 1) and (data[i][3] != 0):
                 # print(self.embedded_sectors)
                 if self.embedded_sectors[data[i][3]-1][data[i][4]] == 1:
                     surround = self.__near_field_check(self.destroy_rad, i)
-                    if surround[0] > 0:
+                    if surround[1] > 1:
                         coef = surround[0] - surround[1]
                         solution_matrix.append(
                             [self.fast_priority[data[i][3]-1][data[i][4]] + coef, 2, [data[i][1], data[i][2]]])
@@ -184,7 +181,7 @@ class Brain():
 
     def __path_searching(self):
         solution_matrix = self.__variants_searching()
-        print(solution_matrix)
+        # print(solution_matrix)
         path = []
         for variant in solution_matrix:
             x2, y2 = variant[2]

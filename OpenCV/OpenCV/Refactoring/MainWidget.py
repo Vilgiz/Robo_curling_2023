@@ -34,28 +34,68 @@ class MainWidget(QtWidgets.QWidget):
         self.game = GameThread()
 
     def send_step_to_robot(self):      
-        if self.difficulty_box.currentIndex() == 0:
-            easy_mode = True
-            hard_mode = False
-        if self.difficulty_box.currentIndex() == 1:
-            easy_mode = False
-            hard_mode = False
-        if self.difficulty_box.currentIndex() == 2:
-            easy_mode = False
-            hard_mode = True
-        step_data = self.game.get_coordinates(easy_mode, hard_mode)
-        if step_data != None:
-            self.robot.send_step(step_data)
-            print('Master: ', step_data)
-            #self.brain.draw_plt()
-        pass
+        try:
+            if self.difficulty_box.currentIndex() == 0:
+                easy_mode = True
+                hard_mode = False
+            if self.difficulty_box.currentIndex() == 1:
+                easy_mode = False
+                hard_mode = False
+            if self.difficulty_box.currentIndex() == 2:
+                easy_mode = False
+                hard_mode = True
+            step_data = self.game.get_coordinates(easy_mode, hard_mode)
+            if step_data != None:
+                self.robot.send_step(step_data)
+                print('Master: ', step_data)
+                #self.brain.draw_plt()
+            pass
+        except Exception as e:
+            pass
+
+    def send_throw1_to_robot(self):
+        step_data = ((350, 100), (349, 1250), [2])
+        self.robot.send_step(step_data)
+        print('Master: ', step_data)
+
+    def send_throw2_to_robot(self):
+        step_data = ((470, 100), (469, 1250), [2])
+        self.robot.send_step(step_data)
+        print('Master: ', step_data)
+
+    def send_throw3_to_robot(self):
+        step_data = ((590, 100), (549, 1250), [2])
+        self.robot.send_step(step_data)
+        print('Master: ', step_data)
 
     def __init_controls(self):
         self.make_step_button = QtWidgets.QPushButton("АВТОХОД")
-        self.make_step_button.setFixedSize(500, 500)
+        self.make_step_button.setFixedSize(400, 400)
         self.make_step_button.setFont(QtGui.QFont(self.fonts, 16))
         self.make_step_button.clicked.connect(self.send_step_to_robot)
         pass
+        self.throw1_button = QtWidgets.QPushButton("ЧИСТКА1")
+        self.throw1_button.setFixedSize(100, 100)
+        self.throw1_button.setFont(QtGui.QFont(self.fonts, 16))
+        self.throw1_button.clicked.connect(self.send_throw1_to_robot)
+        pass
+        self.throw2_button = QtWidgets.QPushButton("ЧИСТКА2")
+        self.throw2_button.setFixedSize(100, 100)
+        self.throw2_button.setFont(QtGui.QFont(self.fonts, 16))
+        self.throw2_button.clicked.connect(self.send_throw2_to_robot)
+        pass
+        self.throw3_button = QtWidgets.QPushButton("ЧИСТКА3")
+        self.throw3_button.setFixedSize(100, 100)
+        self.throw3_button.setFont(QtGui.QFont(self.fonts, 16))
+        self.throw3_button.clicked.connect(self.send_throw3_to_robot)
+        pass
+        self.throw_group = QtWidgets.QGroupBox("ЧИСТКА")
+        self.throw_group_layout = QtWidgets.QHBoxLayout()
+        self.throw_group_layout.addWidget(self.throw1_button)
+        self.throw_group_layout.addWidget(self.throw2_button)
+        self.throw_group_layout.addWidget(self.throw3_button)
+        self.throw_group.setLayout(self.throw_group_layout)
+
 
     def __init_score(self): 
         self.score_group = QtWidgets.QGroupBox("Счёт")
@@ -94,6 +134,7 @@ class MainWidget(QtWidgets.QWidget):
         
         self.right_widget.addWidget(self.score_group)
         self.right_widget.addWidget(self.make_step_button)
+        self.right_widget.addWidget(self.throw_group)
         self.right_widget.addWidget(self.difficulty_group)
 
         self.right_widget.setSpacing (0)

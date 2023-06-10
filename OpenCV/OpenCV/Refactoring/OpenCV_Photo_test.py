@@ -23,11 +23,16 @@ upper_green = (20, 255, 255) """
 # Определение диапазона нужного цвета в HSV
 lower_green = (140, 100, 0)
 upper_green = (255, 255, 160)
+# Yelow hsv
+lower_green = (15, 60, 100)  # (90, 70, 20)
+upper_green = (100, 255, 255)  # (120, 220, 100)
 
+#reg rgb
+# lower_green = (100, 0, 0)
+# upper_green = (255, 100, 100)
+# # Преобразование изображения в цветовую модель HSV
 
-# Преобразование изображения в цветовую модель HSV
-
-hsv = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
 
 # Создание маски для зеленого цвета
 mask = cv.inRange(hsv, lower_green, upper_green)
@@ -68,7 +73,7 @@ def main():
     cv.imshow("Mask", mask)
 
     cv.namedWindow('image')
-    cv.setMouseCallback("image", mouse_callback)
+    cv.setMouseCallback("Mask", mouse_callback)
 
     print_()
 

@@ -38,7 +38,7 @@ class Vision():
         self.upper = COLOR.upper
         self.count = 0
         self.param1 = 1
-        self.param2 = 0.29  # 0.43
+        self.param2 = 0.26  # 0.43
         self.RED_ROCKS = []
         self.YELL_ROCKS = []
         #self.LR = Detecter()

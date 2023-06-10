@@ -25,7 +25,7 @@ class GameThread(QtCore.QObject):
         self.last_stop_coordinates = result[1]
         if (result[2][0] == 0): self.last_color = (0,255,0)
         if (result[2][0] == 1): self.last_color = (0,255,255)
-        if (result[2][0] == 1): self.last_color = (0,0,255)
+        if (result[2][0] == 2): self.last_color = (0,0,255)
         return result
 
     def __init_game_parameters(self):
@@ -37,8 +37,8 @@ class GameThread(QtCore.QObject):
         self.last_start_coordinates = (0, 0)
         self.last_stop_coordinates = (0, 0)
         self.last_color = (0, 255, 0)
-        center = (470, 1250)
-
+        center = (465, 1260)
+        self.drawcenter =(1260, 465)
         radius_white_Circle = 0.1
         radius_green_Circle = 150
         radius_blue_Ring = 390
@@ -92,29 +92,39 @@ class GameThread(QtCore.QObject):
             self.Vis_RED.RED_ROCKS = data_RED
             self.Vis_RED.YELL_ROCKS = data_YELL
 
-            print("RED") 
-            print(self.Vis_RED.RED_ROCKS)  
-            print("YELL")  
-            print(self.Vis_RED.YELL_ROCKS)
+            # print("RED") 
+            # print(self.Vis_RED.RED_ROCKS)  
+            # print("YELL")  
+            # print(self.Vis_RED.YELL_ROCKS)
 
             if type(data_RED) == int:
-                    print(self.Red_scope.point)
+                 pass
+                    # print(self.Red_scope.point)
             else:
-                    print(self.Red_scope.point)
+                    # print(self.Red_scope.point)
                     for quantity in range (len(data_RED)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
                         self.Red_scope.Which_field(self.Red_scope.iteration_of_piptics(data_RED, quantity))
                     #print(Red_scope.point)
 
             if type(data_YELL) == int:
-                    print(self.Yellow_scope.point)
+                 pass
+                    # print(self.Yellow_scope.point)
             else:
-                    print(self.Yellow_scope.point)
+                    # print(self.Yellow_scope.point)
                     for quantity in range (len(data_YELL)):                                           # ВНИМАНИЕ!!!!!! КОСТЫЛЬ РАЗМЕРОМ С МЛЕЧНЫЙ ПУТЬ!!!!!!! 
                         self.Yellow_scope.Which_field(self.Yellow_scope.iteration_of_piptics(data_YELL, quantity))
                     #print(Blue_scope.point)
             start = (self.last_start_coordinates[1], self.last_start_coordinates[0])
             stop = (self.last_stop_coordinates[1], self.last_stop_coordinates[0])
+            cv2.circle(warped_image, self.drawcenter, 150, (0,255,0), 2)
+            cv2.circle(warped_image, self.drawcenter, 270, (0,255,0), 2)
+            cv2.circle(warped_image, self.drawcenter, 390, (0,255,0), 2)
             cv2.line(warped_image, start, stop, self.last_color, 8)
+            cv2.line(warped_image, (300, 0), (300, 2000), self.last_color, 8)
+            
+            cv2.circle(warped_image, (100, 470), 55, (0,0,255), 2)
+            cv2.circle(warped_image, (100, 350), 55, (0,0,255), 2)
+            cv2.circle(warped_image, (100, 590), 55, (0,0,255), 2)
             self.processed_image_signal.emit(warped_image)
             self.score_data.emit(str([self.Yellow_scope.point, self.Red_scope.point]))
     def __del__(self):
