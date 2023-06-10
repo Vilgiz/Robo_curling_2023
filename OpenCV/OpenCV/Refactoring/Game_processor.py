@@ -102,7 +102,7 @@ class Brain():
                 angle = 360 + angle
             if distance > self.Field.radius[1] and distance < self.Field.radius[0]:
                 sector_type = 1
-            elif distance > self.Field.radius[3] and distance < self.Field.radius[2]:
+            elif distance > self.Field.radius[3] and distance < self.Field.radius[2]+30:
                 sector_type = 2
             elif distance < self.Field.radius[3]:
                 sector_type = 3

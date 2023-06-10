@@ -17,7 +17,8 @@ class Balli:
         distance_from_center = math.sqrt((coord_pipt[0] - self.cx)**2 + (coord_pipt[1] - self.cy)**2)
 
         if distance_from_center < self.radius_white_Circle:
-            #print ("White Circle")
+            #print ("White-green Circle")
+            self.point += 80
             return self.point
         elif distance_from_center > self.radius_white_Circle and distance_from_center < self.radius_green_Circle:
             #print ("Green Circle")

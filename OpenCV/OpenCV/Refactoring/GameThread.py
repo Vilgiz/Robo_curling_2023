@@ -39,7 +39,7 @@ class GameThread(QtCore.QObject):
         self.last_color = (0, 255, 0)
         center = (470, 1250)
 
-        radius_white_Circle = 30
+        radius_white_Circle = 0.1
         radius_green_Circle = 150
         radius_blue_Ring = 390
         radius_white_Ring = 270
