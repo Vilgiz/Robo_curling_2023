@@ -97,7 +97,7 @@ class Vision():
         #self.__show_circle(frame)
         self.__Red_Yell_array(frame)
         #self.__show_circle(frame)
-        cv2.imshow('frame', frame)
+        #cv2.imshow('frame', frame)
         #if self.count == 1:
             #cv2.createTrackbar('param1', 'frame', 1, 1000, self.__onChange1)   
             #cv2.createTrackbar('param2', 'frame', 1, 1000, self.__onChange2) 

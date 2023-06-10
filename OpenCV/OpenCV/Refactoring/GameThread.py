@@ -15,14 +15,11 @@ class GameThread(QtCore.QObject):
     original_image_signal = QtCore.pyqtSignal(np.ndarray)
     processed_image_signal = QtCore.pyqtSignal(np.ndarray)
     score_data = QtCore.pyqtSignal(str)
-    #player_score_signal = QtCore.pyqtSignal(int)
-    #cid = QtCore.pyqtSignal(np.ndarray) # Corrected image data
-    #oid = QtCore.pyqtSignal(np.ndarray) # Original image data
-    #hole_data = QtCore.pyqtSignal(str)
-    #score_data = QtCore.pyqtSignal(str)
 
-    def get_coordinates(self):
+    def get_coordinates(self, easy_mode, hard_mode):
         self.brain.take_data(Human=self.Vis_RED.RED_ROCKS, Robot=self.Vis_RED.YELL_ROCKS)
+        self.brain.hard_mode = hard_mode
+        self.brain.easy_mode = easy_mode
         result = self.brain.solve()
         self.last_start_coordinates = result[0]
         self.last_stop_coordinates = result[1]

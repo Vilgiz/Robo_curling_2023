@@ -28,7 +28,7 @@ calib_list = []
 
 while True:
     frame = Cap.get_image()
-    cv2.imshow('frame', frame)
+    #cv2.imshow('frame', frame)
 
     key = cv2.waitKey(1)
     if key == ord('q'):

@@ -276,7 +276,7 @@ if __name__ == '__main__':
         take_frame = Cap.get_image()
         #_,take_frame = Cap.read()
         frame = cv2.flip(cv2.flip(take_frame,0),1)
-        cv2.imshow('frame', frame)
+        #cv2.imshow('frame', frame)
 
         key = cv2.waitKey(1)
         if key == ord('q'):
