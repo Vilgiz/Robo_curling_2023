@@ -54,7 +54,7 @@ class GameThread(QtCore.QObject):
         self.__init_game_parameters()
         self.camera = Camera()        
         self.timer = QtCore.QBasicTimer()
-        self.timer.start(0, self)
+        self.timer.start(250, self)
 
     def timerEvent(self, event):
         if (event.timerId() != self.timer.timerId()):
