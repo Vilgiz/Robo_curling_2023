@@ -52,48 +52,88 @@ class MainWidget(QtWidgets.QWidget):
             pass
         except Exception as e:
             pass
-
+            # cv2.line(warped_image, (100, 230), (2000, 230), (255, 255, 0), 1)
+            # cv2.line(warped_image, (100, 350), (2000, 350), (255, 255, 0), 1)
+            # cv2.line(warped_image, (100, 470), (2000, 470), (255, 255, 0), 1)
+            # cv2.line(warped_image, (100, 590), (2000, 590), (255, 255, 0), 1)
+            # cv2.line(warped_image, (100, 720), (2000, 720), (255, 255, 0), 1)
     def send_throw1_to_robot(self):
-        step_data = ((350, 100), (349, 1250), [2])
+        step_data = ((250, 100), (249, 1250), [2])
         self.robot.send_step(step_data)
+        self.game.last_start_coordinates = (250, 100)
+        self.game.last_stop_coordinates = (249, 2000)
+        self.game.last_color = (255, 255, 0)
         print('Master: ', step_data)
 
     def send_throw2_to_robot(self):
-        step_data = ((470, 100), (469, 1250), [2])
+        step_data = ((350, 100), (349, 1250), [2])
         self.robot.send_step(step_data)
+        self.game.last_start_coordinates = (350, 100)
+        self.game.last_stop_coordinates = (349, 2000)
+        self.game.last_color = (255, 255, 0)
         print('Master: ', step_data)
 
     def send_throw3_to_robot(self):
-        step_data = ((590, 100), (549, 1250), [2])
+        step_data = ((470, 100), (469, 1250), [2])
         self.robot.send_step(step_data)
+        self.game.last_start_coordinates = (470, 100)
+        self.game.last_stop_coordinates = (469, 2000)
+        self.game.last_color = (255, 255, 0)
+        print('Master: ', step_data)
+
+    def send_throw4_to_robot(self):
+        step_data = ((590, 100), (589, 1250), [2])
+        self.robot.send_step(step_data)
+        self.game.last_start_coordinates = (590, 100)
+        self.game.last_stop_coordinates = (589, 2000)
+        self.game.last_color = (255, 255, 0)
+        print('Master: ', step_data)
+
+    def send_throw5_to_robot(self):
+        step_data = ((720, 100), (719, 1250), [2])
+        self.robot.send_step(step_data)
+        self.game.last_start_coordinates = (720, 100)
+        self.game.last_stop_coordinates = (719, 2000)
+        self.game.last_color = (255, 255, 0)
         print('Master: ', step_data)
 
     def __init_controls(self):
         self.make_step_button = QtWidgets.QPushButton("АВТОХОД")
-        self.make_step_button.setFixedSize(400, 400)
+        self.make_step_button.setFixedSize(700, 300)
         self.make_step_button.setFont(QtGui.QFont(self.fonts, 16))
         self.make_step_button.clicked.connect(self.send_step_to_robot)
         pass
         self.throw1_button = QtWidgets.QPushButton("ЧИСТКА1")
-        self.throw1_button.setFixedSize(100, 100)
+        self.throw1_button.setFixedSize(120, 200)
         self.throw1_button.setFont(QtGui.QFont(self.fonts, 16))
         self.throw1_button.clicked.connect(self.send_throw1_to_robot)
         pass
         self.throw2_button = QtWidgets.QPushButton("ЧИСТКА2")
-        self.throw2_button.setFixedSize(100, 100)
+        self.throw2_button.setFixedSize(120, 200)
         self.throw2_button.setFont(QtGui.QFont(self.fonts, 16))
         self.throw2_button.clicked.connect(self.send_throw2_to_robot)
         pass
         self.throw3_button = QtWidgets.QPushButton("ЧИСТКА3")
-        self.throw3_button.setFixedSize(100, 100)
+        self.throw3_button.setFixedSize(120, 200)
         self.throw3_button.setFont(QtGui.QFont(self.fonts, 16))
         self.throw3_button.clicked.connect(self.send_throw3_to_robot)
         pass
+        self.throw4_button = QtWidgets.QPushButton("ЧИСТКА4")
+        self.throw4_button.setFixedSize(120, 200)
+        self.throw4_button.setFont(QtGui.QFont(self.fonts, 16))
+        self.throw4_button.clicked.connect(self.send_throw4_to_robot)
+        pass
+        self.throw5_button = QtWidgets.QPushButton("ЧИСТКА5")
+        self.throw5_button.setFixedSize(120, 200)
+        self.throw5_button.setFont(QtGui.QFont(self.fonts, 16))
+        self.throw5_button.clicked.connect(self.send_throw5_to_robot)
         self.throw_group = QtWidgets.QGroupBox("ЧИСТКА")
         self.throw_group_layout = QtWidgets.QHBoxLayout()
         self.throw_group_layout.addWidget(self.throw1_button)
         self.throw_group_layout.addWidget(self.throw2_button)
         self.throw_group_layout.addWidget(self.throw3_button)
+        self.throw_group_layout.addWidget(self.throw4_button)
+        self.throw_group_layout.addWidget(self.throw5_button)
         self.throw_group.setLayout(self.throw_group_layout)
 
 
@@ -146,13 +186,13 @@ class MainWidget(QtWidgets.QWidget):
     def __init_image_widget(self):
         self.original_image_widget = ImageWidget()
         self.original_image_widget.setStyleSheet('background-color: #262626;')
-        self.original_image_widget.setMinimumSize(1000, 0)
-        self.original_image_widget.setMaximumSize(1000, 600)
+        self.original_image_widget.setMinimumSize(800, 0)
+        self.original_image_widget.setMaximumSize(800, 600)
         self.game.original_image_signal.connect(self.original_image_widget.image_data_slot)
         self.processed_image_widget = ImageWidget()
         self.processed_image_widget.setStyleSheet('background-color: #262626;')
-        self.processed_image_widget.setMinimumSize(1000, 0)
-        self.processed_image_widget.setMaximumSize(1000, 600)
+        self.processed_image_widget.setMinimumSize(800, 0)
+        self.processed_image_widget.setMaximumSize(800, 600)
         self.game.processed_image_signal.connect(self.processed_image_widget.image_data_slot)
         #self.game.cid.connect(self.ciw.image_data_slot)
 

@@ -184,7 +184,7 @@ class Brain():
 
     def __path_searching(self):
         solution_matrix = self.__variants_searching()
-        print(solution_matrix)
+        #print(solution_matrix)
         path = []
         for variant in solution_matrix:
             x2, y2 = variant[2]
@@ -302,5 +302,5 @@ if __name__ == '__main__':
 
     brain.take_data(Robot=data2, Human=data1)
     res = brain.solve()
-    print(res)
+    #print(res)
     brain.draw_plt()

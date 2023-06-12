@@ -120,11 +120,25 @@ class GameThread(QtCore.QObject):
             cv2.circle(warped_image, self.drawcenter, 270, (0,255,0), 2)
             cv2.circle(warped_image, self.drawcenter, 390, (0,255,0), 2)
             cv2.line(warped_image, start, stop, self.last_color, 8)
-            cv2.line(warped_image, (300, 0), (300, 2000), self.last_color, 8)
+            cv2.line(warped_image, (300, 0), (300, 2000), (0,255,0), 8)
             
-            cv2.circle(warped_image, (100, 470), 55, (0,0,255), 2)
+            cv2.circle(warped_image, (100, 250), 55, (0,0,255), 2)
             cv2.circle(warped_image, (100, 350), 55, (0,0,255), 2)
+            cv2.circle(warped_image, (100, 470), 55, (0,0,255), 2)
             cv2.circle(warped_image, (100, 590), 55, (0,0,255), 2)
+            cv2.circle(warped_image, (100, 720), 55, (0,0,255), 2)
+
+            cv2.putText(warped_image, '1', (70, 250), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 2, (0,255,255), 2)
+            cv2.putText(warped_image, '2', (70, 350), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 2, (0,255,255), 2)
+            cv2.putText(warped_image, '3', (70, 470), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 2, (0,255,255), 2)
+            cv2.putText(warped_image, '4', (70, 590), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 2, (0,255,255), 2)
+            cv2.putText(warped_image, '5', (70, 720), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 2, (0,255,255), 2)
+
+            cv2.line(warped_image, (100, 250), (2000, 250), (255, 255, 0), 1)
+            cv2.line(warped_image, (100, 350), (2000, 350), (255, 255, 0), 1)
+            cv2.line(warped_image, (100, 470), (2000, 470), (255, 255, 0), 1)
+            cv2.line(warped_image, (100, 590), (2000, 590), (255, 255, 0), 1)
+            cv2.line(warped_image, (100, 720), (2000, 720), (255, 255, 0), 1)
             self.processed_image_signal.emit(warped_image)
             self.score_data.emit(str([self.Yellow_scope.point, self.Red_scope.point]))
     def __del__(self):
