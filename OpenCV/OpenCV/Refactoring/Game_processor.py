@@ -44,10 +44,52 @@ class Field():
                 buf.append([sector_center_x, sector_center_y])
             self.centers.append(buf)
 
+class data():
+    def __init__(self, Robot, Human, Field):
+        self.R = Robot
+        self.H = Human
+        self.R_and_H = Robot + Human
 
-""" class Rock():
-    def __init__():
-        pass   """
+        self.__Field_scanning(Field)
+
+
+    def __Field_scanning (self, Field):
+        self.H_sec = []
+        self.R_sec = []
+
+        for Rock in self.H:
+            distance = math.sqrt(
+                (Rock[0]-Field.center[0])**2 + (Rock[1]-Field.center[1])**2)
+            angle = math.degrees(math.atan2(
+                Rock[1]-Field.center[1], Rock[0]-Field.center[0]))
+            if angle < 0:
+                angle = 360 + angle
+            sector_number = int(angle // Field.sector_size)
+
+            if distance > Field.radius[1] and distance < Field.radius[0]:
+                sector_type = 0
+            elif distance < Field.radius[2]+30:
+                sector_type = 1
+            else:
+                sector_type = 2
+            self.H_sec.append([sector_type, sector_number])
+
+        for Rock in self.R:
+            distance = math.sqrt(
+                (Rock[0]-Field.center[0])**2 + (Rock[1]-Field.center[1])**2)
+            angle = math.degrees(math.atan2(
+                Rock[1]-Field.center[1], Rock[0]-Field.center[0]))
+            if angle < 0:
+                angle = 360 + angle
+            sector_number = int(angle // Field.sector_size)
+
+            if distance > Field.radius[1] and distance < Field.radius[0]:
+                sector_type = 0
+            elif distance < Field.radius[2]+30:
+                sector_type = 1
+            else:
+                sector_type = 2
+            self.R_sec.append([sector_type, sector_number])
 
 
 class Brain():
@@ -92,32 +134,6 @@ class Brain():
         self.start_safe_rad = config.start_safe_rad
         self.error_limit = config.error_limit
 
-    def __field_scanning(self, data):
-        for i in range(len(data)):
-            distance = math.sqrt(
-                (data[i][1]-self.Field.center[0])**2 + (data[i][2]-self.Field.center[1])**2)
-            angle = math.degrees(math.atan2(
-                data[i][2]-self.Field.center[1], data[i][1]-self.Field.center[0]))
-            if angle < 0:
-                angle = 360 + angle
-            if distance > self.Field.radius[1] and distance < self.Field.radius[0]:
-                sector_type = 1
-            elif distance > self.Field.radius[3] and distance < self.Field.radius[2]+30:
-                sector_type = 2
-            elif distance < self.Field.radius[3]:
-                sector_type = 3
-            else:
-                sector_type = 0
-            #Камни в мешающей зоне
-            # if (670> data[i][1] >270) and (850> data[i][2] >550):
-            #     sector_type = 10
-
-            sector_number = int(angle // self.Field.sector_size)
-            data[i].append(sector_type)
-            data[i].append(sector_number)
-
-        return (data)
-
     def __near_field_check(self, radius, point_idx):
         point = self.data[point_idx]
         count_robot = 0
@@ -135,56 +151,61 @@ class Brain():
         return [count_human, count_robot]
 
     def __variants_searching(self):
-        free_sectors = self.embedded_sectors
-        data = self.__field_scanning(self.data)
+        free_sectors = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
         solution_matrix = []
-        for i in range(len(data)):
-            if (data[i][0] == 1) and (data[i][3] == 3):
-                surround = self.__near_field_check(self.destroy_rad, i)
-                coef = surround[0] - surround[1]
-                solution_matrix.append(
-                    [10 + coef, 2, [data[i][1], data[i][2]]])
-            elif (data[i][0] == 1) and (data[i][3] != 0):
-                # print(self.embedded_sectors)
-                if self.embedded_sectors[data[i][3]-1][data[i][4]] == 1:
-                    surround = self.__near_field_check(self.destroy_rad, i)
-                    if surround[0] > 0:
-                        coef = surround[0] - surround[1]
-                        solution_matrix.append(
-                            [self.fast_priority[data[i][3]-1][data[i][4]] + coef, 2, [data[i][1], data[i][2]]])
-                    else:
-                        k = randint(1,4)
-                        if k == 3: result = 2
-                        else: result = 1
-                        solution_matrix.append(
-                            [self.fast_priority[data[i][3]-1][data[i][4]], result, [data[i][1], data[i][2]]])
-            elif (data[i][0] != 0) and (data[i][3] == 1):
-                free_sectors[0][data[i][4]] = 0
-            elif (data[i][0] != 0) and (data[i][3] == 2):
-                for j in range(5):
-                    k = data[i][4] + j
-                    l = data[i][4] - j
+        print(self.embedded_sectors)
+        print (free_sectors)
+        for i in range(len(self.Gdata.H)):
+            H_rock = self.Gdata.H[i]
+            H_sec = self.Gdata.H_sec[i]
+            if (H_sec[0] != 2 and not self.embedded_sectors[H_sec[0]][H_sec[1]] == 0):
+                k = randint(1,4)
+                if k == 3: temp = 2
+                else: temp = 1
+                priority = self.fast_priority[H_sec[0]][ H_sec[1]]
+                solution_matrix.append([priority, temp, [H_rock[0], H_rock[1]]])
+            if H_sec[0] == 1:
+                for j in range (3):
+                    k = H_sec[1] + j
+                    l = H_sec[1] - j
                     if l < 0:
                         l = 22+l
                     if k > 21:
                         k = k-22
                     free_sectors[1][k] = 0
                     free_sectors[1][l] = 0
-        normal_priority = [[x*y for x, y in zip(row_a, row_b)]
-                           for row_a, row_b in zip(self.normal_priority, free_sectors)]
+            elif H_sec[0] == 0:
+                free_sectors[0][H_sec[1]] = 0
+
+        for i in range(len(self.Gdata.R)):
+            R_sec = self.Gdata.R_sec[i]
+            if R_sec[0] == 1:
+                for j in range (3):
+                    k = R_sec[1] + j
+                    l = R_sec[1] - j
+                    if l < 0:
+                        l = 22+l
+                    if k > 21:
+                        k = k-22
+                    free_sectors[1][k] = 0
+                    free_sectors[1][l] = 0
+            elif R_sec[0] == 0:
+                free_sectors[0][R_sec[1]] = 0
+
+        norm_priority = np.multiply(self.normal_priority, free_sectors)
         for i in range(2):
-            for j in range(len(normal_priority[0])):
-                if (normal_priority[i][j] != 0):
-                    solution_matrix.append(
-                        [normal_priority[i][j], 0, self.Field.centers[i][j]])
-        solution_matrix = sorted(
-            solution_matrix, key=lambda x: x[0], reverse=True)
+            for j in range(22):
+                if norm_priority[i][j] != 0:
+                    solution_matrix.append([norm_priority[i][j], 0, self.Field.centers[i][j]])
+        solution_matrix = sorted(solution_matrix, key=lambda x: x[0], reverse=True)
 
         return (solution_matrix)
 
     def __path_searching(self):
         solution_matrix = self.__variants_searching()
-        #print(solution_matrix)
         path = []
         for variant in solution_matrix:
             x2, y2 = variant[2]
@@ -195,30 +216,29 @@ class Brain():
                 b = x1 - x2
                 c = x2 * y1 - x1 * y2
                 collision = 0
-                for point in self.data:
-                    point_x = point[1]
-                    point_y = point[2]
+                for point in self.Gdata.R_and_H:
+                    point_x = point[0]
+                    point_y = point[1]
                     if ((point_y < 80 + y2) and (variant[1] == 0) or
                             (point_y < -55 + y2) and (variant[1] != 0)) and ([point_x, point_y] != variant[2]):
-                        distance_to_line = abs(
+                        distance_to_path = abs(
                             a * point_x + b * point_y + c) / math.sqrt(a ** 2 + b ** 2)
 
-                        if distance_to_line < self.safe_distance:
+                        if distance_to_path < self.safe_distance:
                             collision += 1
                 if not collision:
                     buf.append([[x1, y1], [x2, y2], [variant[1]]])
             buf = sorted(buf, key=lambda x: abs(x[0][0]-x[1][0]))
             if buf:
                 path.append(buf)
-        # result = path[:min(len(path), self.variability)]
 
         return (path)
 
     def __safety_check(self, result):
-        if (0 < result[0][0] < 800) and (0 < result[1][0] < 800) and (10 < result[0][1]):
-            for point in self.data:
-                if ((result[0][0]-self.start_safe_rad < point[1] < result[0][0]+self.start_safe_rad) and
-                        (self.start_y - self.start_safe_rad < point[2] < self.start_y + self.start_safe_rad)):
+        if (0 < result[0][0] < 800) and (0 < result[1][0] < 980) and (98 < result[0][1]):
+            for point in self.Gdata.R_and_H:
+                if ((result[0][0]-self.start_safe_rad < point[0] < result[0][0]+self.start_safe_rad) and
+                        (self.start_y - self.start_safe_rad < point[1] < self.start_y + self.start_safe_rad)):
                     return False
             return (True)
         else:
@@ -227,10 +247,10 @@ class Brain():
     def draw_plt(self):
 
         service_p = [[0, self.max_x+100], [0, self.Field.center[1]*2]]
-        colors = ['white', 'blue', 'red']
-        x = [point[1] for point in self.data]
-        y = [point[2] for point in self.data]
-        c = [colors[point[0]] for point in self.data]
+        colors = [['white'], ['yellow'], ['red']]
+        x = [point[0] for point in self.Gdata.R_and_H]
+        y = [point[1] for point in self.Gdata.R_and_H]
+        c = colors[1]*len(self.Gdata.R)+ colors[2]*len(self.Gdata.H)
         angles = np.linspace(0, 360, self.Field.num_sectors+1)
 
         fig, ax = plt.subplots(figsize=(8, 8))
@@ -289,7 +309,9 @@ class Brain():
 
     def take_data(self, Robot, Human):
         # тут для формата данных [[x,y],[x,y]...]
+        self.Gdata = data(Robot, Human, self.Field)
         self.data = [[2] + buf for buf in Robot] + [[1] + buf for buf in Human]
+
 
     def update_settings(self):
         self.__init__()
@@ -297,10 +319,13 @@ class Brain():
 
 if __name__ == '__main__':
     brain = Brain()
-    data1 = [[200, 800], [400, 550], [400, 1100], [400, 11], [620, -10]]
+    data1 = [[400, 1250], [620, -10], [500, 700], [620, -10],[400, 850]]
     data2 = [[150, 980], [400, 1400]]
 
     brain.take_data(Robot=data2, Human=data1)
+    #print (brain.Gdata.H)
+    #print (brain.Gdata.R)
+    #print (brain.data)
     res = brain.solve()
     #print(res)
     brain.draw_plt()

@@ -28,7 +28,7 @@ fast_priority = [[6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
 
 variability = 2
 hard_mode = True
-easy_mode = False
+easy_mode = True
 destroy_rad = 150
 
 # Возможность выключить некотоыре секторы из расчета (1-on, 0-off)
