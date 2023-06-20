@@ -7,16 +7,67 @@ from GameThread import GameThread
 class MainWidget(QtWidgets.QWidget):
     def __init__(self,  parent=None):
         super().__init__()
+
         self.__init_logic()
+        self.__init_manual_count()
         self.__init_window_parameters()
         self.__init_image_widget()
         self.__init_score()
         self.__init_controls()
         self.__init_difficulty()
+                #self.robot_wins = 0
+        #self.player_wins = 0
+        try:
+            with open("saved.txt", "r") as input:
+                line = input.readline().replace("[", "").replace("]", "").split(',')#.write(str([self.rw_count, self.pw_count]))
+                self.robot_wins = int(line[0])
+                self.player_wins = int(line[1])
+                self.lcd_rw.display(self.robot_wins)
+                self.lcd_pw.display(self.player_wins)
+        except : pass
         self.__init_layout()
         self.setLayout(self.main_layout)
         self.game.score_data.connect(self.__update_score)
         
+    def __add_robot_win(self):
+        self.robot_wins = self.robot_wins + 1
+        self.lcd_rw.display(self.robot_wins)
+        with open("saved.txt", "w") as output:
+            output.write(str([self.robot_wins, self.player_wins]))
+        pass
+
+    def __add_player_win(self):
+        self.player_wins = self.player_wins + 1
+        self.lcd_pw.display(self.player_wins)
+        with open("saved.txt", "w") as output:
+            output.write(str([self.robot_wins, self.player_wins]))
+        pass
+
+    def __init_manual_count(self):
+        self.mcg =   QtWidgets.QGroupBox("Ручной счётчик побед")
+        self.mcgl = QtWidgets.QGridLayout()
+        self.btn_rw = QtWidgets.QPushButton("Победа робота")
+        #self.btn_rw.setFont(QtGui.QFont(self.fonts, 16))
+        self.btn_rw.setMinimumHeight(200)
+        #self.btn_rw.setFixedSize(100, 80)
+        self.btn_rw.clicked.connect(self.__add_robot_win)
+        self.lcd_rw = QtWidgets.QLCDNumber()
+        self.lcd_rw.setDigitCount(3)
+        self.btn_pw = QtWidgets.QPushButton("Победа человека")
+        #self.btn_pw.setFont(QtGui.QFont(self.fonts, 16))
+        self.btn_pw.setMinimumHeight(200)
+        # self.btn_pw.setFixedSize(100, 80)
+        self.btn_pw.clicked.connect(self.__add_player_win)
+        self.lcd_pw = QtWidgets.QLCDNumber()
+        self.lcd_pw.setDigitCount(3)
+        self.mcgl.addWidget(self.btn_rw, 0,0)
+        self.mcgl.addWidget(self.btn_pw, 0,1)
+        self.mcgl.addWidget(self.lcd_rw, 1,0)
+        self.mcgl.addWidget(self.lcd_pw, 1,1)
+        #lay.addWidget(btn_pw)
+        #self.mcg.setFont(QtGui.QFont(self.fonts, 16))
+        self.mcg.setLayout(self.mcgl)
+
     def __init_difficulty(self):
         self.difficulty_group = QtWidgets.QGroupBox("Сложность")
         self.difficulty_group_layout = QtWidgets.QHBoxLayout()
@@ -26,6 +77,7 @@ class MainWidget(QtWidgets.QWidget):
         self.difficulty_group_layout.addWidget(self.difficulty_box)
         self.difficulty_group.setLayout(self.difficulty_group_layout)
         self.difficulty_group.setMaximumHeight(80)
+        self.difficulty_box.setCurrentIndex(2)
 
 
     def __init_logic(self):
@@ -170,6 +222,7 @@ class MainWidget(QtWidgets.QWidget):
         self.left_widget = QtWidgets.QVBoxLayout()
         #self.left_widget.addWidget(self.original_image_widget)
         self.left_widget.addWidget(self.processed_image_widget)
+        self.left_widget.addWidget(self.mcg)
         self.right_widget = QtWidgets.QVBoxLayout()
         
         self.right_widget.addWidget(self.score_group)

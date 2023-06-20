@@ -135,7 +135,10 @@ class Brain():
         return [count_human, count_robot]
 
     def __variants_searching(self):
-        free_sectors = self.embedded_sectors
+        free_sectors = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]#self.embedded_sectors
         data = self.__field_scanning(self.data)
         solution_matrix = []
         for i in range(len(data)):
@@ -158,10 +161,10 @@ class Brain():
                         else: result = 1
                         solution_matrix.append(
                             [self.fast_priority[data[i][3]-1][data[i][4]], result, [data[i][1], data[i][2]]])
-            elif (data[i][0] != 0) and (data[i][3] == 1):
+            if (data[i][0] != 0) and (data[i][3] == 1):
                 free_sectors[0][data[i][4]] = 0
             elif (data[i][0] != 0) and (data[i][3] == 2):
-                for j in range(5):
+                for j in range(3):
                     k = data[i][4] + j
                     l = data[i][4] - j
                     if l < 0:
@@ -266,7 +269,7 @@ class Brain():
             variants = self.__path_searching()
             # print(variants)
             if len(variants) == 0:
-                print('[ERROR]: no one variant is safety')
+                print('[ERROR]: no one variant is safety 1')
                 return None
             else:
                 if self.hard_mode:
@@ -283,7 +286,7 @@ class Brain():
                     return (result)
                     break
                 if count > self.error_limit:
-                    print('[ERROR]: no one variant is safety')
+                    print('[ERROR]: no one variant is safety 2')
                     return None
                     # следующая итерация - придумать, что делать в таких случаях
 
