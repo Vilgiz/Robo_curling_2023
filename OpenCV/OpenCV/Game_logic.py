@@ -81,12 +81,7 @@ def solution_searching (solution_matrix, normal_priority, fast_priority, data):
      for i in range(len(data)):
         if (data[i][0] == 1) and (data[i][3] != 0):
             if embedded_sectors[data[i][3]-1][data[i][4]] == 1:
-                surround = near_field_check(150, i, data)
-                if surround [1] > 1:
-                    coef = surround [0] - surround [1]
-                    solution_matrix.append([fast_priority[data[i][3]-1][data[i][4]] + coef,'destroy',[data[i][1], data[i][2]]])
-                else:
-                    solution_matrix.append([fast_priority[data[i][3]-1][data[i][4]] ,'fast',[data[i][1], data[i][2]]])
+                solution_matrix.append([fast_priority[data[i][3]-1][data[i][4]] ,'fast',[data[i][1], data[i][2]]])
         if (data[i][0] != 0) and (data[i][3] == 1):
              free_sectors [0][data[i][4]] = 0
         if (data[i][0] != 0) and (data[i][3] == 2):
